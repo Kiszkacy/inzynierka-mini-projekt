@@ -6,7 +6,4 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>PingPong</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="scenes\" />
-  </ItemGroup>
 </Project>

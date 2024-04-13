@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d7ustprm3wu2"]
 
-[ext_resource type="Script" path="res://scripts/initializer/Initializer.cs" id="1_0g1au"]
+[ext_resource type="Script" path="res://src/scripts/initializer/Initializer.cs" id="1_0g1au"]
 
 [node name="Root" type="Node2D"]
 
