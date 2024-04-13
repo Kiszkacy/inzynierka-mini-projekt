@@ -13,7 +13,7 @@ Feel free to use any text editor for the entire project. However, when working o
 ├── engine/                        # directory related to the engine
 │   ├── src/                       # source code for the engine
 │   │   ├── ...
-│   ├── tests/                     # tests for the game engine
+│   ├── tests/                     # tests for the engine
 │   │   ├── ...
 │   └── README.md                  # documentation for the engine
 │
