@@ -8,11 +8,11 @@
 
 [node name="LeftPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(32, 360)
-Speed = 100.0
+Speed = 400.0
 
 [node name="RightPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(1248, 360)
-Speed = 50.0
+Speed = 200.0
 
 [node name="UserInput" type="Node" parent="."]
 script = ExtResource("1_3rg1q")

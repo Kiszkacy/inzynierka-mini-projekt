@@ -36,7 +36,7 @@ public partial class UserInput : Node
 			this.leftPaddle.StopDown();
 		}
 		
-		else if (@event.IsActionReleased("right-up"))
+		else if (@event.IsActionPressed("right-up"))
 		{
 			this.rightPaddle.GoUp();
 		}
