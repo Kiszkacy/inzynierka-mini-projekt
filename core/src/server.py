@@ -7,16 +7,15 @@ server_socket.listen(1)
 
 connection, client_address = server_socket.accept()
 try:
-    
+    print("Start")
     while True:
         data = connection.recv(1024)
         if data:
-            print("Otrzymano:", data.decode())
-            connection.sendall(b"Dane odebrane przez serwer: " + data)
+            print("Received:", data.decode())
+            connection.sendall(b"This message is sent from server: " + data)
         else:
-            print("Brak danych")
+            print("No data")
             break
 
 finally:
-    # Zamykanie połączenia
     connection.close()
