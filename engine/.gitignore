@@ -3,3 +3,4 @@
 .godot/
 .import/
 .mono/
+*.import
