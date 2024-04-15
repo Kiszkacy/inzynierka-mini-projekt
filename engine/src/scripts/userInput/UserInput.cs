@@ -8,8 +8,8 @@ public partial class UserInput : Node
 	
 	public override void _Ready()
 	{
-		this.leftPaddle = GetNode<Paddle>("LeftPaddle");
-		this.rightPaddle = GetNode<Paddle>("RightPaddle");
+		this.leftPaddle = GetParent().GetNode<Paddle>("LeftPaddle");
+		this.rightPaddle = GetParent().GetNode<Paddle>("RightPaddle");
 	}
 	
 	public override void _Process(double delta)
