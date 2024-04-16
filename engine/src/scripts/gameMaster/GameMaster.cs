@@ -54,7 +54,7 @@ public partial class GameMaster : Node, Observable
             );
             this.UpdatePaddlePositionBasedOnAction(Side.Left, action);
         }
-        if (RightSideModel)
+        if (this.RightSideModel)
         {
             // TODO update based on the model action
         }
