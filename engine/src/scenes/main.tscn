@@ -1,55 +1,43 @@
-[gd_scene load_steps=5 format=3 uid="uid://d7ustprm3wu2"]
+[gd_scene load_steps=6 format=3 uid="uid://d7ustprm3wu2"]
 
 [ext_resource type="Script" path="res://src/scripts/initializer/Initializer.cs" id="1_0g1au"]
 [ext_resource type="Script" path="res://src/scripts/userInput/UserInput.cs" id="1_3rg1q"]
+[ext_resource type="PackedScene" uid="uid://b15ehe6xcqggu" path="res://src/scenes/ball.tscn" id="1_et8mo"]
 [ext_resource type="PackedScene" uid="uid://23xsw0lb2sex" path="res://src/scenes/paddle.tscn" id="2_uxnrb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_830k1"]
-size = Vector2(64, 64)
+size = Vector2(1280, 64)
 
 [node name="Root" type="Node2D"]
 
+[node name="Ball" parent="." instance=ExtResource("1_et8mo")]
+position = Vector2(640, 360)
+
 [node name="Colliders" type="Node" parent="."]
 
-[node name="Wall" type="StaticBody2D" parent="Colliders"]
-position = Vector2(32, -32)
+[node name="WallTop" type="StaticBody2D" parent="Colliders"]
+position = Vector2(640, -32)
 collision_mask = 0
 
-[node name="Hitbox" type="CollisionShape2D" parent="Colliders/Wall"]
+[node name="Hitbox" type="CollisionShape2D" parent="Colliders/WallTop"]
 shape = SubResource("RectangleShape2D_830k1")
 
-[node name="Wall2" type="StaticBody2D" parent="Colliders"]
-position = Vector2(1248, -32)
+[node name="WallBottom" type="StaticBody2D" parent="Colliders"]
+position = Vector2(640, 752)
 collision_mask = 0
 
-[node name="Hitbox" type="CollisionShape2D" parent="Colliders/Wall2"]
-shape = SubResource("RectangleShape2D_830k1")
-
-[node name="Wall3" type="StaticBody2D" parent="Colliders"]
-position = Vector2(32, 752)
-collision_mask = 0
-
-[node name="Hitbox" type="CollisionShape2D" parent="Colliders/Wall3"]
-shape = SubResource("RectangleShape2D_830k1")
-
-[node name="Wall4" type="StaticBody2D" parent="Colliders"]
-position = Vector2(1248, 752)
-collision_mask = 0
-
-[node name="Hitbox" type="CollisionShape2D" parent="Colliders/Wall4"]
+[node name="Hitbox" type="CollisionShape2D" parent="Colliders/WallBottom"]
 shape = SubResource("RectangleShape2D_830k1")
 
 [node name="LeftPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(32, 360)
 collision_layer = 2
-collision_mask = 5
-Speed = 400.0
+Speed = 450.0
 
 [node name="RightPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(1248, 360)
 collision_layer = 2
-collision_mask = 5
-Speed = 200.0
+Speed = 450.0
 
 [node name="UserInput" type="Node" parent="."]
 script = ExtResource("1_3rg1q")
