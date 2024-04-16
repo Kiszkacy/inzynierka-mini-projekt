@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://d7ustprm3wu2"]
+[gd_scene load_steps=8 format=3 uid="uid://d7ustprm3wu2"]
 
 [ext_resource type="Script" path="res://src/scripts/initializer/Initializer.cs" id="1_0g1au"]
 [ext_resource type="Script" path="res://src/scripts/userInput/UserInput.cs" id="1_3rg1q"]
 [ext_resource type="PackedScene" uid="uid://b15ehe6xcqggu" path="res://src/scenes/ball.tscn" id="1_et8mo"]
 [ext_resource type="PackedScene" uid="uid://cm8xknxgxq0hw" path="res://src/scenes/scoreArea.tscn" id="2_qjncq"]
+[ext_resource type="PackedScene" uid="uid://dnuatv61x8rjy" path="res://src/scenes/scoreboard.tscn" id="2_ur8r8"]
 [ext_resource type="PackedScene" uid="uid://23xsw0lb2sex" path="res://src/scenes/paddle.tscn" id="2_uxnrb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_830k1"]
@@ -14,7 +15,8 @@ size = Vector2(1280, 64)
 [node name="Ball" parent="." instance=ExtResource("1_et8mo")]
 position = Vector2(640, 360)
 
-[node name="Scoreboard" type="Node" parent="."]
+[node name="Scoreboard" parent="." instance=ExtResource("2_ur8r8")]
+position = Vector2(640, 64)
 
 [node name="Walls" type="Node" parent="."]
 

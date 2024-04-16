@@ -1,0 +1,91 @@
+[gd_scene load_steps=6 format=3 uid="uid://dnuatv61x8rjy"]
+
+[ext_resource type="Script" path="res://src/scripts/scoreHandler/ScoreHandler.cs" id="1_5kvhq"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_4ucc3"]
+font_size = 44
+font_color = Color(1, 1, 1, 0.752941)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_2e8rw"]
+font_size = 32
+font_color = Color(1, 1, 1, 0.752941)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_fgpjw"]
+font_size = 32
+font_color = Color(1, 1, 1, 0.752941)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_mv7ow"]
+font_size = 32
+font_color = Color(1, 1, 1, 0.752941)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Scoreboard" type="Node2D"]
+script = ExtResource("1_5kvhq")
+
+[node name="Root" type="Control" parent="."]
+z_index = 1
+layout_mode = 3
+anchors_preset = 0
+offset_left = -120.0
+offset_top = -60.0
+offset_right = 120.0
+offset_bottom = 60.0
+auto_translate = false
+
+[node name="Background" type="Panel" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Rows" type="VBoxContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleRow" type="Control" parent="Root/Rows"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Root/Rows/TitleRow"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "SCORE"
+label_settings = SubResource("LabelSettings_4ucc3")
+horizontal_alignment = 1
+
+[node name="ScoreRow" type="HBoxContainer" parent="Root/Rows"]
+layout_mode = 2
+alignment = 1
+
+[node name="ScoreLeft" type="Label" parent="Root/Rows/ScoreRow"]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_2e8rw")
+
+[node name="Separator" type="Label" parent="Root/Rows/ScoreRow"]
+layout_mode = 2
+text = ":"
+label_settings = SubResource("LabelSettings_fgpjw")
+
+[node name="ScoreRight" type="Label" parent="Root/Rows/ScoreRow"]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_mv7ow")

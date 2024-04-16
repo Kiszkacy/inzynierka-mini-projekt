@@ -29,9 +29,27 @@ public partial class ScoreHandler : Node, Observable
 	public int ScoreLeft { get; set; }
 	public int ScoreRight { get; set; }
 	
+	[Export] 
+	public bool ShowScoreboard { get; set; } = true;
+	
+	private Label ScoreLeftLabel { get; set; }
+	private Label ScoreRightLabel { get; set; }
+	
 	public override void _Ready()
 	{
 		EventManager.Get().Subscribe(this);
+		if (this.ShowScoreboard)
+		{
+			this.ScoreLeftLabel = GetNode<Label>("Root/Rows/ScoreRow/ScoreLeft");
+			this.ScoreRightLabel = GetNode<Label>("Root/Rows/ScoreRow/ScoreRight");
+			this.UpdateLabels();
+		}
+		else
+		{
+			Control root = GetNode<Control>("Root");
+			root.Visible = false;
+			root.ProcessMode = ProcessModeEnum.Disabled;
+		}
 	}
 
 	public override void _Process(double delta)
@@ -59,12 +77,20 @@ public partial class ScoreHandler : Node, Observable
 	{
 		this.ScoreLeft += 1;
 		this.CheckIfWon(Side.Left);
+		if (this.ShowScoreboard)
+		{
+			this.UpdateLabels();
+		}
 	}
 
 	public void IncreaseScoreRight()
 	{
 		this.ScoreRight += 1;
 		this.CheckIfWon(Side.Right);
+		if (this.ShowScoreboard)
+		{
+			this.UpdateLabels();
+		}
 	}
 	
 	public void IncreaseScore(Side side)
@@ -89,6 +115,12 @@ public partial class ScoreHandler : Node, Observable
 		{
 			EventManager.Get().RegisterEvent(new Event("SIDE.RIGHT.WON"));
 		}
+	}
+
+	private void UpdateLabels()
+	{
+		this.ScoreLeftLabel.Text = this.ScoreLeft.ToString();
+		this.ScoreRightLabel.Text = this.ScoreRight.ToString();
 	}
 
 	private void ResetScores()
