@@ -52,11 +52,28 @@ public partial class Ball : CharacterBody2D, Observable
 		
 		Vector2 normal = collision.GetNormal();
 		this.Velocity = this.Velocity.Bounce(normal);
+		this.ApplyBounceAngle();
+		this.AdjustSpeed();
+		this.ConditionallyReverseBounceAngle(normal);
+	}
+	
+	private void ApplyBounceAngle()
+	{
+		double bounceAngleInDegrees = this.ClampBounceAngle();
+		double angleNoiseInDegrees = new RandomNumberGenerator().RandfRange(-(float)this.BounceAngleRandomness/2.0f, (float)this.BounceAngleRandomness/2.0f);
 		
+		double finalAngleInDegrees = bounceAngleInDegrees + angleNoiseInDegrees;
+		double finalAngleInRadians = Mathf.DegToRad(finalAngleInDegrees);
+		Vector2 finalBounceDirection = new Vector2(Mathf.Cos((float)finalAngleInRadians), Mathf.Sin((float)finalAngleInRadians));
+		this.Velocity = finalBounceDirection * this.Velocity.Length();
+	}
+	
+	private double ClampBounceAngle()
+	{
 		Vector2 bounceDirection = this.Velocity.Normalized();
 		double bounceAngleInDegrees = Mathf.RadToDeg(Mathf.Atan2(bounceDirection.Y, bounceDirection.X));
-		
-		double bounceRelativeAngleInDegrees = Mathf.Abs(bounceAngleInDegrees) > 90.0f ? Math.Abs(Math.Abs(bounceAngleInDegrees)-180.0f) : Math.Abs(bounceAngleInDegrees);
+		double bounceRelativeAngleInDegrees = Mathf.Abs(bounceAngleInDegrees) > 90.0f ? Math.Abs(Math.Abs(bounceAngleInDegrees) - 180.0f) : Math.Abs(bounceAngleInDegrees);
+    
 		if (bounceRelativeAngleInDegrees > this.BounceMaxAngle)
 		{
 			bool isLeftSideBounce = Mathf.Abs(bounceAngleInDegrees) > 90.0f;
@@ -82,18 +99,21 @@ public partial class Ball : CharacterBody2D, Observable
 			}
 		}
 
-		double angleNoiseInDegrees = new RandomNumberGenerator().RandfRange(-(float)this.BounceAngleRandomness/2.0f, (float)this.BounceAngleRandomness/2.0f);
-
-		double finalAngleInDegrees = bounceAngleInDegrees + angleNoiseInDegrees;
-		double finalAngleInRadians = Mathf.DegToRad(finalAngleInDegrees);
-		Vector2 finalBounceDirection = new Vector2(Mathf.Cos((float)finalAngleInRadians), Mathf.Sin((float)finalAngleInRadians));
-		
+		return bounceAngleInDegrees;
+	}
+	
+	private void AdjustSpeed()
+	{
 		double newSpeed = Mathf.Clamp(this.Velocity.Length() + this.SpeedIncreaseOnBounce, 0.0f, this.MaxSpeed);
-		this.Velocity = finalBounceDirection * (float)newSpeed;
-
+		this.Velocity = this.Velocity.Normalized() * (float)newSpeed;
+	}
+	
+	private void ConditionallyReverseBounceAngle(Vector2 normal)
+	{
 		double bounceAngleRelativeToBottomInDegrees = Mathf.RadToDeg(Vector2.Up.AngleTo(normal));
-		bool isPaddleBounce = Math.Abs(bounceAngleRelativeToBottomInDegrees - 90) < 0.01f || Math.Abs(bounceAngleRelativeToBottomInDegrees - -90) < 0.01f;
-		if (isPaddleBounce && new RandomNumberGenerator().Randf() <= this.ReverseBounceAngleChance/100.0f)
+		double comparisonThreshold = 0.01f;
+		bool isPaddleBounce = Math.Abs(bounceAngleRelativeToBottomInDegrees - 90) < comparisonThreshold || Math.Abs(bounceAngleRelativeToBottomInDegrees + 90) < comparisonThreshold;
+		if (isPaddleBounce && new RandomNumberGenerator().Randf() <= this.ReverseBounceAngleChance / 100.0f)
 		{
 			this.Velocity = new Vector2(this.Velocity.X, -this.Velocity.Y);
 		}
