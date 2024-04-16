@@ -4,7 +4,7 @@ using System;
 public partial class ScoreArea : Area2D
 {
 	[Export]
-	public Side Side { get; set; }
+	public Side ScoreSide { get; set; }
 	
 	public override void _Ready()
 	{
@@ -20,7 +20,7 @@ public partial class ScoreArea : Area2D
 	{
 		if (body is not Ball _) return;
 		
-		EventManager.Get().RegisterEvent(new Event(this.Side.GetCode()+".SCORE"));
+		EventManager.Get().RegisterEvent(new Event(this.ScoreSide.GetCode()+".SCORE"));
 	}
 
 	public ScoreArea()

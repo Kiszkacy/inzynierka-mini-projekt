@@ -39,6 +39,7 @@ shape = SubResource("RectangleShape2D_830k1")
 
 [node name="LeftScoreArea" parent="ScoreAreas" instance=ExtResource("2_qjncq")]
 position = Vector2(-24, 360)
+ScoreSide = 1
 
 [node name="RightScoreArea" parent="ScoreAreas" instance=ExtResource("2_qjncq")]
 position = Vector2(1304, 360)
