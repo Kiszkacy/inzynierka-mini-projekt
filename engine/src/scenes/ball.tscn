@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://b15ehe6xcqggu"]
+
+[ext_resource type="Script" path="res://src/scripts/ball/Ball.cs" id="1_je10c"]
+[ext_resource type="Texture2D" uid="uid://db7almnspouet" path="res://assets/sprites/square.png" id="1_tixdt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_quqqd"]
+size = Vector2(32, 32)
+
+[node name="Ball" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("1_je10c")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+modulate = Color(1, 0.533333, 0, 1)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_tixdt")
+
+[node name="Hitbox" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_quqqd")
