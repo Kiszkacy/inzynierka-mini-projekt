@@ -32,12 +32,12 @@ shape = SubResource("RectangleShape2D_830k1")
 [node name="LeftPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(32, 360)
 collision_layer = 2
-Speed = 450.0
+Speed = 500.0
 
 [node name="RightPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(1248, 360)
 collision_layer = 2
-Speed = 450.0
+Speed = 500.0
 
 [node name="UserInput" type="Node" parent="."]
 script = ExtResource("1_3rg1q")
