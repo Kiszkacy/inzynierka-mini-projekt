@@ -1,9 +1,10 @@
 using Godot;
 using System;
 
-public partial class Ball : CharacterBody2D
+public partial class Ball : CharacterBody2D, Observable
 {
-	[Export] public double LaunchSpeed { get; set; } = 600.0; // in px/sec
+	[Export] 
+	public double LaunchSpeed { get; set; } = 600.0; // in px/sec
 	
 	[Export]
 	public double BounceAngleRandomness { get; set; } = 20.0; // range in degrees (from X/2, to X/2)
@@ -31,11 +32,7 @@ public partial class Ball : CharacterBody2D
 	
 	public override void _Ready()
 	{
-		double launchAngleInDegrees = new RandomNumberGenerator().RandfRange(-(float)this.LaunchAngleRandomness/2.0f, (float)this.LaunchAngleRandomness/2.0f);
-		launchAngleInDegrees += Mathf.Sign(launchAngleInDegrees) * this.MinimalLaunchAngle;
-		double launchAngleInRadians = Mathf.DegToRad(180.0f + launchAngleInDegrees);
-		Vector2 launchDirection = new Vector2(Mathf.Cos((float)launchAngleInRadians), Mathf.Sin((float)launchAngleInRadians));
-		this.Launch(launchDirection, this.LaunchSpeed);
+		EventManager.Get().Subscribe(this);
 	}
 
 	public override void _Process(double delta)
@@ -101,10 +98,39 @@ public partial class Ball : CharacterBody2D
 			this.Velocity = new Vector2(this.Velocity.X, -this.Velocity.Y);
 		}
 	}
-	
+
+	private void LaunchItself(Side side = Side.Left)
+	{
+		double launchAngleInDegrees = new RandomNumberGenerator().RandfRange(-(float)this.LaunchAngleRandomness/2.0f, (float)this.LaunchAngleRandomness/2.0f);
+		launchAngleInDegrees += Mathf.Sign(launchAngleInDegrees) * this.MinimalLaunchAngle;
+		double launchAngleInRadians = Mathf.DegToRad(side == Side.Left ? 180.0f + launchAngleInDegrees : launchAngleInDegrees);
+		GD.Print(Mathf.RadToDeg(launchAngleInRadians), side);
+		Vector2 launchDirection = new Vector2(Mathf.Cos((float)launchAngleInRadians), Mathf.Sin((float)launchAngleInRadians));
+		this.Launch(launchDirection, this.LaunchSpeed);
+	}
+
 	public void Launch(Vector2 direction, double speed)
 	{
 		this.Velocity = direction.Normalized() * (float)speed;
+	}
+	
+	public void Notify(Event @event)
+	{
+		if (@event.Code == "RESET")
+		{
+			this.GlobalPosition = GetViewportRect().Size / 2.0f;
+			this.LaunchItself();
+		}
+		else if (@event.Code == "BALL.LAUNCH.LEFT")
+		{
+			this.GlobalPosition = GetViewportRect().Size / 2.0f;
+			this.LaunchItself(Side.Left);
+		}
+		else if (@event.Code == "BALL.LAUNCH.RIGHT")
+		{
+			this.GlobalPosition = GetViewportRect().Size / 2.0f;
+			this.LaunchItself(Side.Right);
+		}
 	}
 
 	public Ball()
