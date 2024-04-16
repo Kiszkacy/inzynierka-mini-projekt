@@ -104,7 +104,6 @@ public partial class Ball : CharacterBody2D, Observable
 		double launchAngleInDegrees = new RandomNumberGenerator().RandfRange(-(float)this.LaunchAngleRandomness/2.0f, (float)this.LaunchAngleRandomness/2.0f);
 		launchAngleInDegrees += Mathf.Sign(launchAngleInDegrees) * this.MinimalLaunchAngle;
 		double launchAngleInRadians = Mathf.DegToRad(side == Side.Left ? 180.0f + launchAngleInDegrees : launchAngleInDegrees);
-		GD.Print(Mathf.RadToDeg(launchAngleInRadians), side);
 		Vector2 launchDirection = new Vector2(Mathf.Cos((float)launchAngleInRadians), Mathf.Sin((float)launchAngleInRadians));
 		this.Launch(launchDirection, this.LaunchSpeed);
 	}
