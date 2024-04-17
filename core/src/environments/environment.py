@@ -6,7 +6,7 @@ import torch
 class Environment:
     counter = 0
 
-    def step(self, action) -> tuple[torch.Tensor, float, bool]:
+    def step(self, action: int) -> tuple[torch.Tensor, float, bool]:
         """
         :param action: Action to be performed in the environment.
         :return: tuple of:
