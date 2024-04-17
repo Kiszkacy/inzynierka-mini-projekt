@@ -17,18 +17,19 @@ class PongAgent(Agent):
         current_reward_sum = 0
         for k, reward in enumerate(reversed(rewards)):
             current_reward_sum = current_reward_sum * self.gamma + reward
-            discounted_rewards[-k - 1] = current_reward_sum  # we start at the last rewards
+            discounted_rewards[-k - 1] = current_reward_sum  # we start at the last reward
 
         return discounted_rewards
 
-    def train(self, learning_rate: float = 1e-3):
+    def train(self, learning_rate: float = 1e-3, patience: int = 100):
         optimizer = torch.optim.Adam(self.policy_network.parameters(), lr=learning_rate, maximize=True)
         state = self.environment.state
         rewards = []
         game_number = 0
         log_probs = []
         loss = []
-        actions = []
+        best_reward = float('-inf')
+        games_without_improvement = 0
 
         while True:
             policy_logits = self.policy_network(state)
@@ -37,31 +38,33 @@ class PongAgent(Agent):
             log_prob = distribution.log_prob(action)
             log_probs.append(log_prob)
 
-            actions.append(action.item())
             state, reward, done = self.environment.step(action.item())
             rewards.append(reward)
 
             if done:
                 game_number += 1
-                advantages = self.discount_rewards(torch.tensor(rewards, dtype=torch.float))
-                advantages = (advantages - advantages.mean()) / advantages.std()
+                total_reward = sum(rewards)
+                if total_reward > best_reward:
+                    best_reward = total_reward
+                    games_without_improvement = 0
+                else:
+                    games_without_improvement += 1
+                    if games_without_improvement == patience:
+                        break
 
-                policy_gradient = []
-                for log_prob, advantage in zip(log_probs, advantages):
-                    policy_gradient.append(log_prob * advantage)
+                advantages = self.discount_rewards(torch.tensor(rewards, dtype=torch.float))
+                # reconsider this, isn't sample size to small for normalization
+                # advantages = (advantages - advantages.mean()) / advantages.std()
+
+                log_probs_tensor = torch.stack(log_probs)
+                policy_loss = torch.dot(log_probs_tensor, advantages) / len(advantages)
 
                 optimizer.zero_grad()
-                policy_loss = torch.stack(policy_gradient).sum()
                 policy_loss.backward()
                 optimizer.step()
 
-                loss.append(sum(actions))
+                loss.append(policy_loss.item())
                 log_probs = []
                 rewards = []
-                actions = []
-                
-            if game_number == 400:  # it shouldn't work like that, add proper stop criteria
-                break
 
         self.visualize_loss(loss)
-
