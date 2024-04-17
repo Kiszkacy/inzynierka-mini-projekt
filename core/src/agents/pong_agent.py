@@ -21,6 +21,47 @@ class PongAgent(Agent):
 
         return discounted_rewards
 
-    def train(self, batch_size: int = 10, learning_rate: float = 1e-3):
-        ...
+    def train(self, learning_rate: float = 1e-3):
+        optimizer = torch.optim.Adam(self.policy_network.parameters(), lr=learning_rate, maximize=True)
+        state = self.environment.state
+        rewards = []
+        game_number = 0
+        log_probs = []
+        loss = []
+        actions = []
+
+        while True:
+            policy_logits = self.policy_network(state)
+            distribution = torch.distributions.Categorical(logits=policy_logits)
+            action = distribution.sample()
+            log_prob = distribution.log_prob(action)
+            log_probs.append(log_prob)
+
+            actions.append(action.item())
+            state, reward, done = self.environment.step(action.item())
+            rewards.append(reward)
+
+            if done:
+                game_number += 1
+                advantages = self.discount_rewards(torch.tensor(rewards, dtype=torch.float))
+                advantages = (advantages - advantages.mean()) / advantages.std()
+
+                policy_gradient = []
+                for log_prob, advantage in zip(log_probs, advantages):
+                    policy_gradient.append(log_prob * advantage)
+
+                optimizer.zero_grad()
+                policy_loss = torch.stack(policy_gradient).sum()
+                policy_loss.backward()
+                optimizer.step()
+
+                loss.append(sum(actions))
+                log_probs = []
+                rewards = []
+                actions = []
+                
+            if game_number == 400:  # it shouldn't work like that, add proper stop criteria
+                break
+
+        self.visualize_loss(loss)
 
