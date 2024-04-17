@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -21,18 +22,23 @@ public partial class SocketHandler : Node
         sender.Connect(remoteEP);
         
         GD.Print($"Connected to server {sender.RemoteEndPoint}.");
-        
-        string message = "Hello, server!";
-        byte[] msg = Encoding.ASCII.GetBytes(message);
-        Send(msg, msg.Length);
 
+        // string message = "Hello, server!";
+        // byte[] msg = Encoding.ASCII.GetBytes(message);
+        // Send(msg, msg.Length);
+
+        // byte[] bytes = new byte[1024];
+        // int bytesReceived = await sender.ReceiveAsync(new ArraySegment<byte>(bytes), SocketFlags.None);
+        // string receivedMessage = Encoding.UTF8.GetString(bytes, 0, bytesReceived);
+        // GD.Print($"Received: {receivedMessage}");
+
+    }
+
+    public byte[] Receive()
+    {
         byte[] bytes = new byte[1024];
-        int bytesRec = sender.Receive(bytes);
-        string receivedMessage = Encoding.UTF8.GetString(bytes, 0, bytesRec);
-        GD.Print($"Received: {receivedMessage}");
-
-        sender.Shutdown(SocketShutdown.Both);
-        sender.Close();
+        sender.Receive(new ArraySegment<byte>(bytes), SocketFlags.None);
+        return bytes;
     }
     
     public void Send(byte[] data, int size)
