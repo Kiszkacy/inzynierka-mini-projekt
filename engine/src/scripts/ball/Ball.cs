@@ -49,14 +49,27 @@ public partial class Ball : CharacterBody2D, Observable
 	{
 		KinematicCollision2D collision = this.MoveAndCollide(this.Velocity * (float)delta);
 		if (collision == null) return;
-		
+
 		Vector2 normal = collision.GetNormal();
+
 		this.Velocity = this.Velocity.Bounce(normal);
 		this.ApplyBounceAngle();
 		this.AdjustSpeed();
 		this.ConditionallyReverseBounceAngle(normal);
 	}
 	
+	private void OnPadleBounceNotify(Vector2 normal)
+	{
+		if(normal == Vector2.Left)
+		{
+			EventManager.Get().RegisterEvent(new Event("SIDE.RIGHT.BOUNCE"));
+		}
+		else if(normal == Vector2.Right)
+		{
+			EventManager.Get().RegisterEvent(new Event("SIDE.LEFT.BOUNCE"));
+		}
+	}
+
 	private void ApplyBounceAngle()
 	{
 		double bounceAngleInDegrees = this.ClampBounceAngle();

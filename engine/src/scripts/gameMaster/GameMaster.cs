@@ -20,13 +20,17 @@ public partial class GameMaster : Node, Observable
     {
         EventManager.Get().Subscribe(this);
         EventManager.Get().RegisterEvent(new Event("RESET"));
+
         if (LeftSideBot)
         {
             this.leftAgent = new SimpleBot();
         }
         if (RightSideModel)
         {
-            // TODO initialize model
+            this.rightAgent = new Model(
+                GetParent().GetNode<SocketHandler>("SocketHandler"), 
+                GetParent().GetNode<RewardHandler>("RewardHandler")
+                );
         }
         if (LeftSideBot || RightSideModel)
         {
@@ -56,7 +60,14 @@ public partial class GameMaster : Node, Observable
         }
         if (this.RightSideModel)
         {
-            // TODO update based on the model action
+            Action action = this.rightAgent.GetAction(
+                Side.Right, 
+                leftPaddle.GlobalPosition.Y, 
+                rightPaddle.GlobalPosition.Y, 
+                ball.GlobalPosition,
+                ball.Velocity
+            );
+            this.UpdatePaddlePositionBasedOnAction(Side.Right, action);
         }
     }
 
