@@ -30,5 +30,5 @@ select = [
 ignore = ["E501"]
 
 [tool.ruff.format]
-quote-style = "single"
+quote-style = "double"
 indent-style = "space"
