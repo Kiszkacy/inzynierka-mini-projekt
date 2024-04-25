@@ -6,3 +6,5 @@ pydantic~=2.7.0
 pydantic-settings~=2.2.1
 matplotlib~=3.8.4
 seaborn~=0.13.2
+ruff~=0.4.2
+pre-commit~=3.7.0

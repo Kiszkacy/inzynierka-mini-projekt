@@ -17,6 +17,12 @@ This document outlines the installation, configuration, and usage of the Core Mo
 pip install -r requirements.txt
 ```
 
+4. **Install Pre-commit Hooks:**
+
+```bash
+pre-commit install
+```
+
 **Optional: GPU Acceleration**
 
 This project uses PyTorch. If you want to leverage GPU acceleration for faster processing, refer to the PyTorch installation instructions for your specific hardware setup: https://pytorch.org/get-started/locally/

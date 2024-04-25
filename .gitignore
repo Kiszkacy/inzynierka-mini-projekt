@@ -1,2 +1,8 @@
 .idea/
 .vscode/
+.godot/
+.mono/
+__pycache__/
+.venv
+# The .env file should be kept private
+.env
