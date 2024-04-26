@@ -1,4 +1,5 @@
 import torch
+
 from core.src.agents.agent import Agent
 from core.src.environments.environment import Environment
 from core.src.policies.policy_network import PolicyNetwork
@@ -64,5 +65,3 @@ class PongAgent(Agent):
                 loss.append(policy_loss.item())
                 log_probs = []
                 rewards = []
-
-        self.visualize_loss(loss)

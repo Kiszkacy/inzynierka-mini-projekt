@@ -1,8 +1,9 @@
 import json
 
 import torch
+
 from core.src.environments.environment import Environment
-from core.src.SocketServerThread import SocketServerThread
+from core.src.socket_server_thread import SocketServerThread
 
 
 class ServerEnvironment(Environment):

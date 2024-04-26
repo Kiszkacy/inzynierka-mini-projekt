@@ -5,3 +5,13 @@ repos:
       - id: ruff
         args: [ --fix ]
       - id: ruff-format
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: |
+          python -m mypy core
+        types: [ python ]
+        language: system
+        require_serial: true
+        pass_filenames: false
