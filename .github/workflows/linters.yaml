@@ -1,17 +1,33 @@
-name: Ruff
+name: CI
 
 on: push
 
+
 jobs:
-  call-python-setup:
-    uses: ./.github/workflows/python-setup.yaml
-  ruff:
+  create-virtualenv:
     runs-on: ubuntu-latest
-    needs: call-python-setup
     steps:
-    - run: ruff check core --verbose --output-format=github
-  mypy:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v2
+    - uses: syphar/restore-virtualenv@v1
+      id: cache-virtualenv
+
+    - uses: syphar/restore-pip-download-cache@v1
+      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+    - run: pip install -r requirements.txt
+      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+  linter:
+    needs: create-virtualenv
     runs-on: ubuntu-latest
-    needs: call-python-setup
     steps:
-      - run: mypy core --show-error-codes --pretty --show-column-numbers --show-error-context
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v2
+    - uses: syphar/restore-virtualenv@v1
+      id: cache-virtualenv
+
+    - name: ruff
+      run: ruff check core --verbose --output-format=github
+    - name: mypy
+      run: mypy core --show-error-codes --pretty --show-column-numbers --show-error-context
