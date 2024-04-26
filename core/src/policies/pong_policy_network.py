@@ -1,5 +1,6 @@
-from core.src.policies.policy_network import PolicyNetwork
 from torch import nn
+
+from core.src.policies.policy_network import PolicyNetwork
 
 
 class PongPolicyNetwork(PolicyNetwork):
