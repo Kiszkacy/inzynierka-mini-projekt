@@ -52,6 +52,9 @@ public partial class UserInput : Node
 		{
 			this.rightPaddle.StopDown();
 		}
+		else if (@event.IsActionPressed("reset")){
+			EventManager.Get().RegisterEvent(new Event("RESET"));
+		}
 	}
 
 	public UserInput()
