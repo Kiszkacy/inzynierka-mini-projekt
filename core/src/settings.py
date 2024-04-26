@@ -19,9 +19,7 @@ class GodotSettings(BaseSettings):
         if value.suffix == ".exe":
             return value
 
-        raise ValueError(
-            f"Path should point to an .exe file but instead pointed to {value.suffix}"
-        )
+        raise ValueError(f"Path should point to an .exe file but instead pointed to {value.suffix}")
 
 
 class CoreSettings(BaseSettings):

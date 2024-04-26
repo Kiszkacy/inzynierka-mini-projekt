@@ -3,6 +3,7 @@
 
 [tool.ruff]
 target-version = "py311"
+line-length = 120
 
 [tool.ruff.lint]
 select = [
@@ -27,7 +28,6 @@ select = [
     "PD", # Pandas
     "RUF100", # remove unused noqa
 ]
-ignore = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
