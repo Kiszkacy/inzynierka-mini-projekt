@@ -4,9 +4,10 @@ import subprocess
 import threading
 from pathlib import Path
 
+from loguru import logger
+
 from core.src.settings import get_settings
 from core.src.socket_server_thread import SocketServerThread
-from loguru import logger
 
 
 class GodotHandler:
@@ -31,12 +32,9 @@ class GodotHandler:
         self.server_thread.send(data)
 
     def request_data(self) -> dict:
-        while not self.server_thread.received_request:
-            ...
-
         data: bytes = self.server_thread.get_request()
-        decoded_data = json.loads(data.decode())
-        return decoded_data
+        decoded_data = data.decode()
+        return json.loads(decoded_data)
 
     def launch_godot(self):
         args = [

@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 from loguru import logger
-from pydantic import FilePath, DirectoryPath, Field, ValidationError, field_validator
+from pydantic import DirectoryPath, Field, FilePath, ValidationError, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,7 +28,7 @@ def configure_logging():
             logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
     logger.remove()
-    logger.add(sys.stderr, level="INFO")
+    logger.add(sys.stderr, level="INFO", backtrace=True, diagnose=True)
 
     logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
     logging.getLogger("ray").handlers = [InterceptHandler()]
@@ -39,24 +39,22 @@ def configure_logging():
 
 
 class GodotSettings(BaseSettings):
-
     model_config = SettingsConfigDict(frozen=True)
 
     godot_executable: FilePath
     project_path: DirectoryPath
 
     # noinspection PyNestedDecorators
-    @field_validator('godot_executable', mode='after')
+    @field_validator("godot_executable", mode="after")
     @classmethod
     def validate_godot_executable(cls, value: Path) -> Path:
-        if value.suffix == '.exe':
+        if value.suffix == ".exe":
             return value
 
         raise ValueError(f"Path should point to an .exe file but instead pointed to {value.suffix}")
 
 
 class CoreSettings(BaseSettings):
-
     model_config = SettingsConfigDict(
         env_prefix="CORE_",
         env_file="../.env",

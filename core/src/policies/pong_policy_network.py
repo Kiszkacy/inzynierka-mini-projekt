@@ -4,7 +4,6 @@ from core.src.policies.policy_network import PolicyNetwork
 
 
 class PongPolicyNetwork(PolicyNetwork):
-
     def __init__(self, input_shape: int, output_shape: int):
         super().__init__()
         self.layers = nn.Sequential(

@@ -1,22 +1,22 @@
 import numpy as np
-import torch
-from core.src.environments.environment import Environment
-from core.src.utils.godot_handler import GodotHandler
 from gymnasium.spaces import Box, Discrete
 
+from core.src.environments.environment import Environment
+from core.src.utils.godot_handler import GodotHandler
 
-class GymnasiumServerEnvironment(Environment):
+
+class GymnasiumServerEnvironment(Environment[np.ndarray, np.integer]):
     action_space = Discrete(2)
     # probably should be something more accurate
     observation_space = Box(low=-(2**60), high=2**60, shape=(6,), dtype=np.float32)
 
-    def __init__(self, config: dict | None = None):
+    def __init__(self, **_kwargs):
         self.godot_handler = GodotHandler()
-        self._state: torch.Tensor | None = None
+        self._state: np.ndarray | None = None
         self.initialized = False
         self.init()
 
-    def step(self, action: np.integer) -> tuple[torch.Tensor, float, bool, bool, dict]:
+    def step(self, action: np.integer) -> tuple[np.ndarray, float, bool, bool, dict]:
         """
         :param action: Action to be performed in the environment.
         :return: tuple of:
@@ -38,12 +38,12 @@ class GymnasiumServerEnvironment(Environment):
         info = {}
         return state, reward, is_done, truncated, info
 
-    def reset(self, *, seed=None, options=None) -> tuple[torch.Tensor, dict]:
+    def reset(self, **_kwargs) -> tuple[np.ndarray, dict]:
         """Resets the state of the environment and returns initial observations."""
         return self.default_state, {}
 
     @property
-    def state(self) -> torch.Tensor:
+    def state(self) -> np.ndarray:
         """Returns current state of the environment."""
         if self._state is None:
             self._state = self.get_data()[0]
@@ -54,5 +54,5 @@ class GymnasiumServerEnvironment(Environment):
         self.initialized = True
 
     @property
-    def default_state(self) -> np.random:
-        return np.random.randn(6)
+    def default_state(self) -> np.ndarray:
+        return np.random.default_rng().random(size=6)

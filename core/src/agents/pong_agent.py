@@ -1,15 +1,23 @@
+from pathlib import Path
+
 import torch
 
-from core.src.agents.agent import Agent
+from core.src.agents.trainable_agent import TrainableAgent
 from core.src.environments.environment import Environment
 from core.src.policies.policy_network import PolicyNetwork
 
 
-class PongAgent(Agent):
-
-    def __init__(self, policy_network: PolicyNetwork, environment: Environment, gamma: float = 0.99):
-        super().__init__(policy_network, environment)
+class PongAgent(TrainableAgent):
+    def __init__(self, policy_network: PolicyNetwork, environment_cls: type[Environment], gamma: float = 0.99):
+        super().__init__(policy_network, environment_cls)
         self.gamma = gamma
+        self.environment = self.environment_cls()
+
+    def load(self, path: Path):
+        pass
+
+    def act(self, state):
+        pass
 
     def discount_rewards(self, rewards: torch.Tensor):
         """Decreasing rewards with respect to time."""
@@ -28,7 +36,7 @@ class PongAgent(Agent):
         game_number = 0
         log_probs = []
         loss = []
-        best_reward = float('-inf')
+        best_reward = float("-inf")
         games_without_improvement = 0
 
         while True:
@@ -38,7 +46,7 @@ class PongAgent(Agent):
             log_prob = distribution.log_prob(action)
             log_probs.append(log_prob)
 
-            state, reward, done = self.environment.step(action.item())
+            state, reward, done, _, _ = self.environment.step(action.item())
             rewards.append(reward)
 
             if done:
@@ -66,5 +74,3 @@ class PongAgent(Agent):
                 loss.append(policy_loss.item())
                 log_probs = []
                 rewards = []
-
-        self.visualize_loss(loss)

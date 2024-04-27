@@ -2,19 +2,20 @@ import os
 
 import ray
 import torch
-from core.src.environments.gymnasium_environment import GymnasiumServerEnvironment
-from core.src.settings import configure_logging, reload_settings
 from loguru import logger
 from ray.rllib.algorithms.ppo.ppo import PPOConfig
+
+from core.src.environments.gymnasium_environment import GymnasiumServerEnvironment
+from core.src.settings import configure_logging, reload_settings
 
 if __name__ == "__main__":
     os.environ["RAY_COLOR_PREFIX"] = "1"
     configure_logging()
+    reload_settings()
     ray.init(runtime_env={"worker_process_setup_hook": configure_logging}, configure_logging=False)
 
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Using {DEVICE=}")
-    reload_settings()
 
     env = GymnasiumServerEnvironment
 
@@ -27,8 +28,7 @@ if __name__ == "__main__":
         .evaluation(evaluation_num_workers=1)
     )
 
-    algo = config.build(
-    )  # 2. build the algorithm,
+    algo = config.build()  # 2. build the algorithm,
 
     for _ in range(5):
         logger.info(algo.train())  # 3. train it,

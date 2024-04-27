@@ -1,17 +1,20 @@
+import abc
 import json
+from typing import Any
 
 import torch
+
 from core.src.environments.environment import Environment
 from core.src.socket_server_thread import SocketServerThread
 
 
-class ServerEnvironment(Environment):
+class ServerEnvironment(Environment[torch.Tensor, int]):
     def __init__(self, config: dict | None = None):  # noqa: ARG002
         self.server_thread = SocketServerThread("localhost", 12345)
         self.server_thread.start()
         self._state: torch.Tensor | None = None
 
-    def step(self, action: int) -> tuple[torch.Tensor, float, bool]:
+    def step(self, action: int) -> tuple[torch.Tensor, float, bool, bool, dict]:
         """
         :param action: Action to be performed in the environment.
         :return: tuple of:
@@ -23,21 +26,21 @@ class ServerEnvironment(Environment):
         return self.request_data()
 
     def request_data(self):
-        while not self.server_thread.received_request:
-            ...
-
         data: bytes = self.server_thread.get_request()
         decoded_data = json.loads(data.decode())
         state = decoded_data["state"]
         reward = decoded_data["reward"]
         is_done = decoded_data["is_done"]
+        truncated = False
+        info = {}
 
-        return torch.tensor(state), reward, is_done
+        return torch.tensor(state), reward, is_done, truncated, info
 
-    def reset(self, *, seed=None, options=None): ...
+    @abc.abstractmethod
+    def reset(self, *, seed: int | None = None, options=None) -> tuple[torch.Tensor, dict[str, Any]]: ...
 
     @property
     def state(self) -> torch.Tensor:
         if self._state is None:
-            self._state, _, _ = self.request_data()
+            self._state = self.request_data()[0]
         return self._state
