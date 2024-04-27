@@ -6,11 +6,12 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_quqqd"]
 size = Vector2(32, 32)
 
-[node name="Ball" type="CharacterBody2D"]
+[node name="Ball" type="CharacterBody2D" node_paths=PackedStringArray("Ray")]
 collision_layer = 4
 collision_mask = 3
 motion_mode = 1
 script = ExtResource("1_je10c")
+Ray = NodePath("Ray")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 modulate = Color(1, 0.533333, 0, 1)
@@ -19,3 +20,9 @@ texture = ExtResource("1_tixdt")
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_quqqd")
+
+[node name="Ray" type="RayCast2D" parent="."]
+enabled = false
+target_position = Vector2(0, 0)
+collision_mask = 2
+hit_from_inside = true

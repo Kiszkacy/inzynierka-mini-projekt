@@ -30,6 +30,9 @@ public partial class Ball : CharacterBody2D, Observable
 	[Export] 
 	public double MaxSpeed { get; set; } = 1000.0; // in px/sec
 	
+	[Export]
+	public RayCast2D Ray { get; set; }
+
 	public override void _Ready()
 	{
 		EventManager.Get().Subscribe(this);
@@ -49,16 +52,15 @@ public partial class Ball : CharacterBody2D, Observable
 	{
 		KinematicCollision2D collision = this.MoveAndCollide(this.Velocity * (float)delta);
 		if (collision == null) return;
-
+		
 		Vector2 normal = collision.GetNormal();
-
 		this.Velocity = this.Velocity.Bounce(normal);
 		this.ApplyBounceAngle();
 		this.AdjustSpeed();
 		this.ConditionallyReverseBounceAngle(normal);
 	}
-	
-	private void OnPadleBounceNotify(Vector2 normal)
+
+	private void OnPaddleBounceNotify(Vector2 normal)
 	{
 		if(normal == Vector2.Left)
 		{
@@ -86,7 +88,7 @@ public partial class Ball : CharacterBody2D, Observable
 		Vector2 bounceDirection = this.Velocity.Normalized();
 		double bounceAngleInDegrees = Mathf.RadToDeg(Mathf.Atan2(bounceDirection.Y, bounceDirection.X));
 		double bounceRelativeAngleInDegrees = Mathf.Abs(bounceAngleInDegrees) > 90.0f ? Math.Abs(Math.Abs(bounceAngleInDegrees) - 180.0f) : Math.Abs(bounceAngleInDegrees);
-    
+		
 		if (bounceRelativeAngleInDegrees > this.BounceMaxAngle)
 		{
 			bool isLeftSideBounce = Mathf.Abs(bounceAngleInDegrees) > 90.0f;
