@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 
 public partial class Ball : CharacterBody2D, Observable
 {
@@ -32,7 +33,13 @@ public partial class Ball : CharacterBody2D, Observable
 	
 	[Export]
 	public RayCast2D Ray { get; set; }
-
+	
+	private const int PositionHistoryBufferSize = 5;
+	private Vector2[] positionHistory = new Vector2[PositionHistoryBufferSize];
+	private int positionHistoryFrameIndex;
+	private const float IsStuckThreshold = 15.0f;
+	private bool IsStuck => positionHistory.All(pos => pos.DistanceTo(positionHistory[0]) <= IsStuckThreshold);
+	
 	public override void _Ready()
 	{
 		EventManager.Get().Subscribe(this);
@@ -52,12 +59,23 @@ public partial class Ball : CharacterBody2D, Observable
 	{
 		KinematicCollision2D collision = this.MoveAndCollide(this.Velocity * (float)delta);
 		if (collision == null) return;
-		
+
+		this.UpdatePositionHistory();
+		if (this.IsStuck) return;
+
 		Vector2 normal = collision.GetNormal();
 		this.Velocity = this.Velocity.Bounce(normal);
 		this.ApplyBounceAngle();
 		this.AdjustSpeed();
 		this.ConditionallyReverseBounceAngle(normal);
+	}
+
+	private void UpdatePositionHistory()
+	{
+		this.positionHistory[this.positionHistoryFrameIndex] = this.GlobalPosition;
+		this.positionHistoryFrameIndex = (this.positionHistoryFrameIndex + 1) % PositionHistoryBufferSize;
+		
+		if (this.IsStuck) EventManager.Get().RegisterEvent(new Event("RESET.BALL.REQUEST"));
 	}
 
 	private void OnPaddleBounceNotify(Vector2 normal)
@@ -88,7 +106,7 @@ public partial class Ball : CharacterBody2D, Observable
 		Vector2 bounceDirection = this.Velocity.Normalized();
 		double bounceAngleInDegrees = Mathf.RadToDeg(Mathf.Atan2(bounceDirection.Y, bounceDirection.X));
 		double bounceRelativeAngleInDegrees = Mathf.Abs(bounceAngleInDegrees) > 90.0f ? Math.Abs(Math.Abs(bounceAngleInDegrees) - 180.0f) : Math.Abs(bounceAngleInDegrees);
-		
+	
 		if (bounceRelativeAngleInDegrees > this.BounceMaxAngle)
 		{
 			bool isLeftSideBounce = Mathf.Abs(bounceAngleInDegrees) > 90.0f;
