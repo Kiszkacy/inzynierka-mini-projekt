@@ -25,4 +25,3 @@ shape = SubResource("RectangleShape2D_quqqd")
 enabled = false
 target_position = Vector2(0, 0)
 collision_mask = 2
-hit_from_inside = true
