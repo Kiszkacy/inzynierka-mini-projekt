@@ -20,18 +20,7 @@ public partial class SocketHandler : Node
         IPEndPoint remoteEP = new IPEndPoint(ipAddress, 12345);
         
         sender.Connect(remoteEP);
-        
         GD.Print($"Connected to server {sender.RemoteEndPoint}.");
-
-        // string message = "Hello, server!";
-        // byte[] msg = Encoding.ASCII.GetBytes(message);
-        // Send(msg, msg.Length);
-
-        // byte[] bytes = new byte[1024];
-        // int bytesReceived = await sender.ReceiveAsync(new ArraySegment<byte>(bytes), SocketFlags.None);
-        // string receivedMessage = Encoding.UTF8.GetString(bytes, 0, bytesReceived);
-        // GD.Print($"Received: {receivedMessage}");
-
     }
 
     public byte[] Receive()
