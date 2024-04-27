@@ -6,7 +6,6 @@ from core.src.policies.policy_network import PolicyNetwork
 
 
 class PongAgent(Agent):
-
     def __init__(self, policy_network: PolicyNetwork, environment: Environment, gamma: float = 0.99):
         super().__init__(policy_network, environment)
         self.gamma = gamma
@@ -28,7 +27,7 @@ class PongAgent(Agent):
         game_number = 0
         log_probs = []
         loss = []
-        best_reward = float('-inf')
+        best_reward = float("-inf")
         games_without_improvement = 0
 
         while True:
@@ -66,5 +65,3 @@ class PongAgent(Agent):
                 loss.append(policy_loss.item())
                 log_probs = []
                 rewards = []
-
-        self.visualize_loss(loss)
