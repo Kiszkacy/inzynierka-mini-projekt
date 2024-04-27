@@ -10,7 +10,7 @@ class GymnasiumServerEnvironment(Environment[np.ndarray, np.integer]):
     # probably should be something more accurate
     observation_space = Box(low=-(2**60), high=2**60, shape=(6,), dtype=np.float32)
 
-    def __init__(self, **_kwargs):
+    def __init__(self, config: dict | None = None):  # noqa: ARG002
         self.godot_handler = GodotHandler()
         self._state: np.ndarray | None = None
         self.initialized = False
