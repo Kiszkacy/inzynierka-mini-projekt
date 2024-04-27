@@ -58,10 +58,21 @@ public partial class Ball : CharacterBody2D, Observable
 	private void MovementProcess(double delta)
 	{
 		KinematicCollision2D collision = this.MoveAndCollide(this.Velocity * (float)delta);
-		if (collision == null) return;
-
+		bool isColliding = collision != null;
+		
 		this.UpdatePositionHistory();
-		if (this.IsStuck) return;
+		if (!isColliding && this.DidFlyThroughSomething())
+		{
+			// TODO handle this case correctly
+			this.GlobalPosition = this.LastPosition;
+			collision = this.MoveAndCollide(this.Velocity * 0.5f * (float)delta);
+		}
+		if (!isColliding) return;
+		if (isColliding && this.IsStuck)
+		{
+			EventManager.Get().RegisterEvent(new Event("RESET.BALL.REQUEST"));
+			return;
+		}
 
 		Vector2 normal = collision.GetNormal();
 		this.Velocity = this.Velocity.Bounce(normal);
@@ -74,9 +85,15 @@ public partial class Ball : CharacterBody2D, Observable
 	{
 		this.positionHistory[this.positionHistoryFrameIndex] = this.GlobalPosition;
 		this.positionHistoryFrameIndex = (this.positionHistoryFrameIndex + 1) % PositionHistoryBufferSize;
-		
-		if (this.IsStuck) EventManager.Get().RegisterEvent(new Event("RESET.BALL.REQUEST"));
 	}
+
+	private bool DidFlyThroughSomething()
+	{
+		this.Ray.TargetPosition = this.LastPosition - this.Ray.GlobalPosition;
+		return this.Ray.IsColliding();
+	}
+
+	private Vector2 LastPosition => this.positionHistory[(this.positionHistoryFrameIndex - 1 + PositionHistoryBufferSize) % PositionHistoryBufferSize];
 
 	private void OnPaddleBounceNotify(Vector2 normal)
 	{
