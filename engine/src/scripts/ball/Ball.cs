@@ -37,8 +37,11 @@ public partial class Ball : CharacterBody2D, Observable
 	private const int PositionHistoryBufferSize = 5;
 	private Vector2[] positionHistory = new Vector2[PositionHistoryBufferSize];
 	private int positionHistoryFrameIndex;
-	private const float IsStuckThreshold = 15.0f;
+	private const float IsStuckThreshold = 5.0f;
 	private bool IsStuck => positionHistory.All(pos => pos.DistanceTo(positionHistory[0]) <= IsStuckThreshold);
+	private const float FlewThroughMovementSlowdown = 0.5f;
+
+	private const float BallSize = 32.0f;
 	
 	public override void _Ready()
 	{
@@ -57,18 +60,18 @@ public partial class Ball : CharacterBody2D, Observable
 	
 	private void MovementProcess(double delta)
 	{
+		this.UpdatePositionHistory();
 		KinematicCollision2D collision = this.MoveAndCollide(this.Velocity * (float)delta);
 		bool isColliding = collision != null;
-		
-		this.UpdatePositionHistory();
+
 		if (!isColliding && this.DidFlyThroughSomething())
 		{
-			// TODO handle this case correctly
 			this.GlobalPosition = this.LastPosition;
-			collision = this.MoveAndCollide(this.Velocity * 0.5f * (float)delta);
+			this.Velocity = new Vector2(-this.Velocity.X, this.Velocity.Y);
+			collision = this.MoveAndCollide(this.Velocity * FlewThroughMovementSlowdown * (float)delta);
 		}
 		if (!isColliding) return;
-		if (isColliding && this.IsStuck)
+		if (this.IsStuck)
 		{
 			EventManager.Get().RegisterEvent(new Event("RESET.BALL.REQUEST"));
 			return;
@@ -90,6 +93,7 @@ public partial class Ball : CharacterBody2D, Observable
 	private bool DidFlyThroughSomething()
 	{
 		this.Ray.TargetPosition = this.LastPosition - this.Ray.GlobalPosition;
+		this.Ray.ForceRaycastUpdate();
 		return this.Ray.IsColliding();
 	}
 
@@ -199,6 +203,20 @@ public partial class Ball : CharacterBody2D, Observable
 		{
 			this.GlobalPosition = GetViewportRect().Size / 2.0f;
 			this.LaunchItself(Side.Right);
+		}
+		else if (@event.Code == "SIDE.LEFT.SCORE.REQUEST") // entered right scoreArea and requests to score
+		{
+			if (this.GlobalPosition.X >= GetViewportRect().Size.X - BallSize/2.0f)
+			{
+				EventManager.Get().RegisterEvent(new Event("SIDE.LEFT.SCORE"));
+			}
+		}
+		else if (@event.Code == "SIDE.RIGHT.SCORE.REQUEST")
+		{
+			if (this.GlobalPosition.X <= 0.0f + BallSize/2.0f)
+			{
+				EventManager.Get().RegisterEvent(new Event("SIDE.RIGHT.SCORE"));
+			}
 		}
 	}
 
