@@ -15,6 +15,12 @@ public partial class Initializer : Node
 		
 	}
 
+	public override void _PhysicsProcess(double delta)
+	{
+		// TODO this should be called in a special class that runs logic at the end of each godot frame
+		EventManager.Get().EmitDelayedEvents();
+	}
+
 	public Initializer()
 	{
 		
