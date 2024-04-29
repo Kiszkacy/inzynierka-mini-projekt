@@ -7,9 +7,9 @@ using Godot;
 
 public class Model : Agent, Observable
 {   
-	private SocketHandler socketHandler;
-	private RewardHandler rewardHandler;
-	private bool gameEnded = false;
+    private SocketHandler socketHandler;
+    private RewardHandler rewardHandler;
+    private bool gameEnded;
 
 	public Action GetAction(Side side, double leftPaddlePosition, double rightPaddlePosition, Vector2 ballPosition, Vector2 ballVelocity)
 	{   
@@ -23,7 +23,6 @@ public class Model : Agent, Observable
 		
 		byte[] rawData = JsonSerializer.Serialize(dict).ToUtf8Buffer(); 
 		socketHandler.Send(rawData, rawData.Length);
-		// GD.Print(dict, dict["state"]);
 		byte[] response = socketHandler.Receive();
 		gameEnded = false;
 		int value = BitConverter.ToInt16(response);

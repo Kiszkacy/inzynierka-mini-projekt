@@ -5,6 +5,7 @@ public partial class RewardHandler : Node, Observable
 {
     private int rewardNow;
     private int rewardBefore;
+    
     public int Reward {
         get {
             int reward = rewardNow - rewardBefore;

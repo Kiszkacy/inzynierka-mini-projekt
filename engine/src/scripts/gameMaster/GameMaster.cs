@@ -105,6 +105,10 @@ public partial class GameMaster : Node, Observable
         {
             this.ResetGame();
         }
+        else if (@event.Code == "RESET.BALL.REQUEST")
+        {
+            this.ResetBall(Side.Left);
+        }
     }
 
     private void ResetBall(Side launchSide)

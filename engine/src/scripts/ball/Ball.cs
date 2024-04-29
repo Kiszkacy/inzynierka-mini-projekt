@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 
 public partial class Ball : CharacterBody2D, Observable
 {
@@ -30,6 +31,18 @@ public partial class Ball : CharacterBody2D, Observable
 	[Export] 
 	public double MaxSpeed { get; set; } = 1000.0; // in px/sec
 	
+	[Export]
+	public RayCast2D Ray { get; set; }
+	
+	private const int PositionHistoryBufferSize = 5;
+	private Vector2[] positionHistory = new Vector2[PositionHistoryBufferSize];
+	private int positionHistoryFrameIndex;
+	private const float IsStuckThreshold = 5.0f;
+	private bool IsStuck => positionHistory.All(pos => pos.DistanceTo(positionHistory[0]) <= IsStuckThreshold);
+	private const float FlewThroughMovementSlowdown = 0.5f;
+
+	private const float BallSize = 32.0f;
+	
 	public override void _Ready()
 	{
 		EventManager.Get().Subscribe(this);
@@ -47,18 +60,46 @@ public partial class Ball : CharacterBody2D, Observable
 	
 	private void MovementProcess(double delta)
 	{
+		this.UpdatePositionHistory();
 		KinematicCollision2D collision = this.MoveAndCollide(this.Velocity * (float)delta);
-		if (collision == null) return;
+		bool isColliding = collision != null;
+
+		if (!isColliding && this.DidFlyThroughSomething())
+		{
+			this.GlobalPosition = this.LastPosition;
+			this.Velocity = new Vector2(-this.Velocity.X, this.Velocity.Y);
+			collision = this.MoveAndCollide(this.Velocity * FlewThroughMovementSlowdown * (float)delta);
+		}
+		if (!isColliding) return;
+		if (this.IsStuck)
+		{
+			EventManager.Get().RegisterEvent(new Event("RESET.BALL.REQUEST"));
+			return;
+		}
 
 		Vector2 normal = collision.GetNormal();
-
 		this.Velocity = this.Velocity.Bounce(normal);
 		this.ApplyBounceAngle();
 		this.AdjustSpeed();
 		this.ConditionallyReverseBounceAngle(normal);
 	}
-	
-	private void OnPadleBounceNotify(Vector2 normal)
+
+	private void UpdatePositionHistory()
+	{
+		this.positionHistory[this.positionHistoryFrameIndex] = this.GlobalPosition;
+		this.positionHistoryFrameIndex = (this.positionHistoryFrameIndex + 1) % PositionHistoryBufferSize;
+	}
+
+	private bool DidFlyThroughSomething()
+	{
+		this.Ray.TargetPosition = this.LastPosition - this.Ray.GlobalPosition;
+		this.Ray.ForceRaycastUpdate();
+		return this.Ray.IsColliding();
+	}
+
+	private Vector2 LastPosition => this.positionHistory[(this.positionHistoryFrameIndex - 1 + PositionHistoryBufferSize) % PositionHistoryBufferSize];
+
+	private void OnPaddleBounceNotify(Vector2 normal)
 	{
 		if(normal == Vector2.Left)
 		{
@@ -86,7 +127,7 @@ public partial class Ball : CharacterBody2D, Observable
 		Vector2 bounceDirection = this.Velocity.Normalized();
 		double bounceAngleInDegrees = Mathf.RadToDeg(Mathf.Atan2(bounceDirection.Y, bounceDirection.X));
 		double bounceRelativeAngleInDegrees = Mathf.Abs(bounceAngleInDegrees) > 90.0f ? Math.Abs(Math.Abs(bounceAngleInDegrees) - 180.0f) : Math.Abs(bounceAngleInDegrees);
-    
+	
 		if (bounceRelativeAngleInDegrees > this.BounceMaxAngle)
 		{
 			bool isLeftSideBounce = Mathf.Abs(bounceAngleInDegrees) > 90.0f;
@@ -162,6 +203,20 @@ public partial class Ball : CharacterBody2D, Observable
 		{
 			this.GlobalPosition = GetViewportRect().Size / 2.0f;
 			this.LaunchItself(Side.Right);
+		}
+		else if (@event.Code == "SIDE.LEFT.SCORE.REQUEST") // entered right scoreArea and requests to score
+		{
+			if (this.GlobalPosition.X >= GetViewportRect().Size.X - BallSize/2.0f)
+			{
+				EventManager.Get().RegisterEvent(new Event("SIDE.LEFT.SCORE"));
+			}
+		}
+		else if (@event.Code == "SIDE.RIGHT.SCORE.REQUEST")
+		{
+			if (this.GlobalPosition.X <= 0.0f + BallSize/2.0f)
+			{
+				EventManager.Get().RegisterEvent(new Event("SIDE.RIGHT.SCORE"));
+			}
 		}
 	}
 
