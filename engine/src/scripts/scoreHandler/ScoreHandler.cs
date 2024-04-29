@@ -127,6 +127,10 @@ public partial class ScoreHandler : Node, Observable
 	{
 		this.ScoreLeft = 0;
 		this.ScoreRight = 0;
+		if (this.ShowScoreboard)
+		{
+			this.UpdateLabels();
+		}
 	}
 
 	public ScoreHandler()
