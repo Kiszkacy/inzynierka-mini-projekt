@@ -8,7 +8,7 @@ public partial class Ball : CharacterBody2D, Observable
 	public double LaunchSpeed { get; set; } = 600.0; // in px/sec
 	
 	[Export]
-	public double BounceAngleRandomness { get; set; } = 20.0; // range in degrees (from X/2, to X/2)
+	public double BounceAngleRandomness { get; set; } = 20.0; // range in degrees (from -X/2, to X/2)
 	
 	[Export]
 	public double ReverseBounceAngleChance { get; set; } = 25.0; // in percentages
@@ -20,10 +20,10 @@ public partial class Ball : CharacterBody2D, Observable
 	public double BounceMinAngle { get; set; } = 10.0; // in degrees (relative to the bottom of the screen)
 	
 	[Export] 
-	public double LaunchAngleRandomness { get; set; } = 50.0; // range in degrees (from X/2 - MinimalLaunchAngle, to X/2 + MinimalLaunchAngle)
+	public double LaunchAngleRandomness { get; set; } = 50.0; // range in degrees (from -X/2 - MinimalLaunchAngle, to X/2 + MinimalLaunchAngle)
 	
 	[Export] 
-	public double MinimalLaunchAngle { get; set; } = 10.0; // range in degrees (from X/2, to X/2)
+	public double MinimalLaunchAngle { get; set; } = 10.0; // range in degrees (from -X/2, to X/2)
 	
 	[Export] 
 	public double SpeedIncreaseOnBounce { get; set; } = 20.0; // in px/sec
