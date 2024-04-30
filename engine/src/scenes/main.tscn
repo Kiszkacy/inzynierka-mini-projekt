@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://d7ustprm3wu2"]
+[gd_scene load_steps=10 format=3 uid="uid://d7ustprm3wu2"]
 
 [ext_resource type="Script" path="res://src/scripts/initializer/Initializer.cs" id="1_0g1au"]
 [ext_resource type="Script" path="res://src/scripts/userInput/UserInput.cs" id="1_3rg1q"]
@@ -7,11 +7,15 @@
 [ext_resource type="PackedScene" uid="uid://cm8xknxgxq0hw" path="res://src/scenes/scoreArea.tscn" id="2_qjncq"]
 [ext_resource type="PackedScene" uid="uid://dnuatv61x8rjy" path="res://src/scenes/scoreboard.tscn" id="2_ur8r8"]
 [ext_resource type="PackedScene" uid="uid://23xsw0lb2sex" path="res://src/scenes/paddle.tscn" id="2_uxnrb"]
+[ext_resource type="Script" path="res://src/scripts/endOfFrameProcessor/EndOfFrameProcessor.cs" id="8_y0kdg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_830k1"]
 size = Vector2(1280, 256)
 
 [node name="Root" type="Node2D"]
+
+[node name="Initializer" type="Node" parent="."]
+script = ExtResource("1_0g1au")
 
 [node name="LeftPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(32, 360)
@@ -63,5 +67,5 @@ script = ExtResource("1_3rg1q")
 script = ExtResource("1_m0v3q")
 RightSideModel = true
 
-[node name="Initializer" type="Node" parent="."]
-script = ExtResource("1_0g1au")
+[node name="EndOfFrameProcessor" type="Node" parent="."]
+script = ExtResource("8_y0kdg")
