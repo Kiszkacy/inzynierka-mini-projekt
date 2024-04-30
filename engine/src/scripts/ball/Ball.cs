@@ -78,6 +78,7 @@ public partial class Ball : CharacterBody2D, Observable
 		}
 
 		Vector2 normal = collision.GetNormal();
+		this.OnPaddleBounceNotify(normal);
 		this.Velocity = this.Velocity.Bounce(normal);
 		this.ApplyBounceAngle();
 		this.AdjustSpeed();
