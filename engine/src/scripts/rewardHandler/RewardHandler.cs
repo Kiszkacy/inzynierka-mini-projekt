@@ -1,49 +1,40 @@
-using Godot;
-using System;
 
-public partial class RewardHandler : Node, Observable
+public class RewardHandler : Singleton<RewardHandler>, Observable
 {
     private int rewardNow;
     private int rewardBefore;
+
+    private const int BounceReward = 1;
+    private const int ScoreReward = 20;
+    private const int EnemyScorePenalty = -20;
     
     public int Reward {
         get {
-            int reward = rewardNow - rewardBefore;
-            rewardBefore = rewardNow;
+            int reward = this.rewardNow - this.rewardBefore;
+            this.rewardBefore = this.rewardNow;
             return reward;
         }
     }
 
-	public override void _Ready()
-	{
-
-	}
-	
-	public override void _Process(double delta)
-	{
-		
-	}
-
-
     public void Notify(Event @event)
     {   
-        rewardBefore = rewardNow;
+        this.rewardBefore = this.rewardNow;
 
         if (@event.Code == "SIDE.RIGHT.BOUNCE")
         {
-            rewardNow += 1;
+            this.rewardNow += BounceReward;
         }
         else if (@event.Code == "SIDE.RIGHT.SCORE")
         {
-            rewardNow += 20;
+            this.rewardNow += ScoreReward;
         }
         else if (@event.Code == "SIDE.LEFT.SCORE")
         {
-            rewardNow -= 20;
+            this.rewardNow -= EnemyScorePenalty;
         }
     }
 
-    public RewardHandler()
+    private RewardHandler()
 	{
 		
 	}
