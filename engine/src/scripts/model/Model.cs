@@ -11,12 +11,13 @@ public class Model : Agent, Observable
 	public Action GetAction(Side side, double leftPaddlePosition, double rightPaddlePosition, Vector2 ballPosition, Vector2 ballVelocity)
 	{   
 		double[] state = {leftPaddlePosition, rightPaddlePosition, ballPosition.X, ballPosition.Y, ballVelocity.X, ballVelocity.Y};
-
+		
 		Dictionary<string, object> dict = new Dictionary<string, object>{
 			["state"] = state,
 			["reward"] = RewardHandler.Get().Reward,
 			["is_done"] = hasGameEndedThisFrame,
 		};
+		RewardHandler.Get().ResetReward();
 		
 		byte[] rawData = JsonSerializer.Serialize(dict).ToUtf8Buffer(); 
 		PipeHandler.Get().Send(rawData);
