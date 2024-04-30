@@ -13,7 +13,7 @@ public partial class Scoreboard : Node
 	
 	public override void _Ready()
 	{
-		ScoreHandler.Get().MaxScore = this.MaxScore;
+		ScoreHandler.Get().MaxScore = Config.Get().Data.Game.MaxScore ?? this.MaxScore;
 		if (this.ShowScoreboard)
 		{
 			ScoreHandler.Get().ScoreLeft.OnChange += OnScoreLeftChange;

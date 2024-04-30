@@ -23,13 +23,14 @@ public partial class Initializer : Node
 
 	private void LoadSingletons() // this method loads singletons that are required to be loaded in a specific order
 	{
+		Config.Get();
 		EventManager.Get();
 	}
 
 	private void SetupEngineSettings()
 	{
-		Engine.TimeScale = 3.0;
-		Engine.PhysicsTicksPerSecond = 60;
+		Engine.TimeScale = Config.Get().Data.Engine.TimeScale;
+		Engine.PhysicsTicksPerSecond = Config.Get().Data.Engine.TicksPerSecond;
 	}
 
 	public Initializer()

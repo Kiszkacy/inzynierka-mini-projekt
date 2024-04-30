@@ -1,9 +1,12 @@
 
+using Godot;
+
 public class RewardHandler : Singleton<RewardHandler>, Observable
 {
-    private const int BounceReward = 1;
-    private const int ScoreReward = 20;
-    private const int EnemyScorePenalty = -20;
+    private readonly int BounceReward = Config.Get().Data.Rewards.BounceReward;
+    private readonly int ScoreReward = Config.Get().Data.Rewards.ScoreReward;
+    private readonly int EnemyScorePenalty = Config.Get().Data.Rewards.EnemyScorePenalty;
+    private readonly int PaddlePositionReward = Config.Get().Data.Rewards.PaddlePositionReward;
     private int reward;
     public int Reward => this.reward;
 

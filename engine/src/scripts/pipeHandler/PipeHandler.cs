@@ -14,9 +14,9 @@ public class PipeHandler : Singleton<PipeHandler>
         }
     }
     
-    private string pipeName = "godot-python-pipe";
+    private string pipeName = Config.Get().Data.Pipe.Name;
     private NamedPipeClientStream pipe;
-    private const int ReadBufferSize = 64;
+    private readonly int ReadBufferSize = Config.Get().Data.Pipe.BufferSize;
     private bool IsConnected { get; set; } = false;
     
     public void Connect()

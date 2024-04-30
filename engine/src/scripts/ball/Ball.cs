@@ -34,12 +34,12 @@ public partial class Ball : CharacterBody2D, Observable
 	[Export]
 	public RayCast2D Ray { get; set; }
 	
-	private const int PositionHistoryBufferSize = 5;
-	private Vector2[] positionHistory = new Vector2[PositionHistoryBufferSize];
+	private readonly int PositionHistoryBufferSize = Config.Get().Data.Game.BallPositionHistoryBufferSize;
+	private Vector2[] positionHistory = new Vector2[Config.Get().Data.Game.BallPositionHistoryBufferSize];
 	private int positionHistoryFrameIndex;
-	private const float IsStuckThreshold = 5.0f;
+	private readonly float IsStuckThreshold = Config.Get().Data.Game.BallStuckThreshold;
 	private bool IsStuck => positionHistory.All(pos => pos.DistanceTo(positionHistory[0]) <= IsStuckThreshold);
-	private const float FlewThroughMovementSlowdown = 0.5f;
+	private readonly float FlewThroughMovementSlowdown = Config.Get().Data.Game.BallFlewThroughMovementSlowdown;
 
 	private const float BallSize = 32.0f;
 	
