@@ -1,5 +1,4 @@
 ﻿using Godot;
-using System;
 
 public partial class GameMaster : Node, Observable
 {
@@ -28,9 +27,7 @@ public partial class GameMaster : Node, Observable
         if (RightSideModel)
         {
             PipeHandler.Get().Connect();
-            this.rightAgent = new Model(
-                GetParent().GetNode<RewardHandler>("RewardHandler")
-            );
+            this.rightAgent = new Model();
         }
         if (LeftSideBot || RightSideModel)
         {

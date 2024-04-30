@@ -6,7 +6,6 @@ using Godot;
 
 public class Model : Agent, Observable
 {   
-	private readonly RewardHandler rewardHandler;
 	private bool hasGameEndedThisFrame;
 
 	public Action GetAction(Side side, double leftPaddlePosition, double rightPaddlePosition, Vector2 ballPosition, Vector2 ballVelocity)
@@ -15,7 +14,7 @@ public class Model : Agent, Observable
 
 		Dictionary<string, object> dict = new Dictionary<string, object>{
 			["state"] = state,
-			["reward"] = rewardHandler.Reward,
+			["reward"] = RewardHandler.Get().Reward,
 			["is_done"] = hasGameEndedThisFrame,
 		};
 		
@@ -42,9 +41,8 @@ public class Model : Agent, Observable
 		}
 	}
 
-	public Model(RewardHandler rewardHandler)
+	public Model()
 	{
-		this.rewardHandler = rewardHandler;
 		EventManager.Get().Subscribe(this);
 	}
 }
