@@ -11,6 +11,7 @@ class ServerEnvironment(Environment):
 
     def __init__(self):
         self.pipe_handler: PipeHandler = PipeHandler()
+        self.pipe_handler.connect()
         self._state: torch.Tensor | None = None
 
     def step(self, action: int) -> tuple[torch.Tensor, float, bool]:
