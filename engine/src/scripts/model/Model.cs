@@ -1,7 +1,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Text.Json;
 using Godot;
 
@@ -46,5 +45,6 @@ public class Model : Agent, Observable
 	public Model(RewardHandler rewardHandler)
 	{
 		this.rewardHandler = rewardHandler;
+		EventManager.Get().Subscribe(this);
 	}
 }
