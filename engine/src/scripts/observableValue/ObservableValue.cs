@@ -27,7 +27,7 @@ public class ObservableValue<T>
             {
                 T oldValue = this.value;
                 this.value = value;
-                ValueChanged<T> valueChanged = new ValueChanged<T>(value, oldValue);
+                ValueChanged<T> valueChanged = new ValueChanged<T>(this.value, oldValue);
                 this.OnChange?.Invoke(this, valueChanged);
             }
         }
