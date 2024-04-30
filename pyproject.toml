@@ -6,6 +6,7 @@ target-version = "py311"
 line-length = 120
 
 [tool.ruff.lint]
+ignore = ["E702"]
 select = [
     "A", #flake8-builtins
     "B", # flake8-bugbear

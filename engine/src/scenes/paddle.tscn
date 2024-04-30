@@ -4,13 +4,14 @@
 [ext_resource type="Texture2D" uid="uid://db7almnspouet" path="res://assets/sprites/square.png" id="1_uakhq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8orfk"]
-size = Vector2(32, 128)
+size = Vector2(32, 96)
 
 [node name="Paddle" type="CharacterBody2D"]
+collision_layer = 2
 script = ExtResource("1_tgtg7")
 
 [node name="Sprite" type="Sprite2D" parent="."]
-scale = Vector2(0.5, 2)
+scale = Vector2(0.5, 1.5)
 texture = ExtResource("1_uakhq")
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]

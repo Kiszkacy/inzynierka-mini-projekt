@@ -12,25 +12,26 @@ if __name__ == "__main__":
     os.environ["RAY_COLOR_PREFIX"] = "1"
     configure_logging()
     reload_settings()
-    ray.init(runtime_env={"worker_process_setup_hook": configure_logging}, configure_logging=False)
+    ray.init(runtime_env={"worker_process_setup_hook": configure_logging}, configure_logging=False, num_gpus=1)
 
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Using {DEVICE=}")
 
     env = GymnasiumServerEnvironment
 
-    config = (  # 1. Configure the algorithm,
+    config = (
         PPOConfig()
         .environment(env)
-        .rollouts(num_rollout_workers=4)
+        .rollouts(
+            num_rollout_workers=15,
+            create_env_on_local_worker=False,
+            num_envs_per_worker=1,
+        )
         .framework("torch")
         .training(model={"fcnet_hiddens": [64, 64]})
-        .evaluation(evaluation_num_workers=1)
     )
 
-    algo = config.build()  # 2. build the algorithm,
+    algo = config.build()
 
     for _ in range(5):
-        logger.info(algo.train())  # 3. train it,
-
-    algo.evaluate()
+        logger.info(algo.train())

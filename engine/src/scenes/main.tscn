@@ -1,24 +1,36 @@
-[gd_scene load_steps=11 format=3 uid="uid://d7ustprm3wu2"]
+[gd_scene load_steps=10 format=3 uid="uid://d7ustprm3wu2"]
 
 [ext_resource type="Script" path="res://src/scripts/initializer/Initializer.cs" id="1_0g1au"]
 [ext_resource type="Script" path="res://src/scripts/userInput/UserInput.cs" id="1_3rg1q"]
 [ext_resource type="PackedScene" uid="uid://b15ehe6xcqggu" path="res://src/scenes/ball.tscn" id="1_et8mo"]
 [ext_resource type="Script" path="res://src/scripts/gameMaster/GameMaster.cs" id="1_m0v3q"]
-[ext_resource type="Script" path="res://src/scripts/socketHandler/SocketHandler.cs" id="1_tibqi"]
 [ext_resource type="PackedScene" uid="uid://cm8xknxgxq0hw" path="res://src/scenes/scoreArea.tscn" id="2_qjncq"]
 [ext_resource type="PackedScene" uid="uid://dnuatv61x8rjy" path="res://src/scenes/scoreboard.tscn" id="2_ur8r8"]
 [ext_resource type="PackedScene" uid="uid://23xsw0lb2sex" path="res://src/scenes/paddle.tscn" id="2_uxnrb"]
-[ext_resource type="Script" path="res://src/scripts/rewardHandler/RewardHandler.cs" id="7_wkv8u"]
+[ext_resource type="Script" path="res://src/scripts/endOfFrameProcessor/EndOfFrameProcessor.cs" id="8_y0kdg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_830k1"]
-size = Vector2(1280, 64)
+size = Vector2(1280, 256)
 
 [node name="Root" type="Node2D"]
 
+[node name="Initializer" type="Node" parent="."]
+script = ExtResource("1_0g1au")
+
+[node name="LeftPaddle" parent="." instance=ExtResource("2_uxnrb")]
+position = Vector2(32, 360)
+Speed = 650.0
+
+[node name="RightPaddle" parent="." instance=ExtResource("2_uxnrb")]
+position = Vector2(1248, 360)
+Speed = 650.0
+
 [node name="Ball" parent="." instance=ExtResource("1_et8mo")]
 position = Vector2(640, 360)
-LaunchSpeed = 700.0
-SpeedIncreaseOnBounce = 0.0
+LaunchSpeed = 750.0
+LaunchAngleRandomness = 25.0
+MinimalLaunchAngle = 5.0
+MaxSpeed = 1300.0
 
 [node name="Scoreboard" parent="." instance=ExtResource("2_ur8r8")]
 position = Vector2(640, 64)
@@ -26,14 +38,14 @@ position = Vector2(640, 64)
 [node name="Walls" type="Node" parent="."]
 
 [node name="WallTop" type="StaticBody2D" parent="Walls"]
-position = Vector2(640, -32)
+position = Vector2(640, -128)
 collision_mask = 0
 
 [node name="Hitbox" type="CollisionShape2D" parent="Walls/WallTop"]
 shape = SubResource("RectangleShape2D_830k1")
 
 [node name="WallBottom" type="StaticBody2D" parent="Walls"]
-position = Vector2(640, 752)
+position = Vector2(640, 848)
 collision_mask = 0
 
 [node name="Hitbox" type="CollisionShape2D" parent="Walls/WallBottom"]
@@ -42,34 +54,18 @@ shape = SubResource("RectangleShape2D_830k1")
 [node name="ScoreAreas" type="Node" parent="."]
 
 [node name="LeftScoreArea" parent="ScoreAreas" instance=ExtResource("2_qjncq")]
-position = Vector2(-24, 360)
+position = Vector2(-160, 360)
 ScoreSide = 1
 
 [node name="RightScoreArea" parent="ScoreAreas" instance=ExtResource("2_qjncq")]
-position = Vector2(1304, 360)
-
-[node name="LeftPaddle" parent="." instance=ExtResource("2_uxnrb")]
-position = Vector2(32, 360)
-collision_layer = 2
-Speed = 500.0
-
-[node name="RightPaddle" parent="." instance=ExtResource("2_uxnrb")]
-position = Vector2(1248, 360)
-collision_layer = 2
-Speed = 500.0
+position = Vector2(1440, 360)
 
 [node name="UserInput" type="Node" parent="."]
 script = ExtResource("1_3rg1q")
-
-[node name="SocketHandler" type="Node" parent="."]
-script = ExtResource("1_tibqi")
-
-[node name="RewardHandler" type="Node" parent="."]
-script = ExtResource("7_wkv8u")
 
 [node name="GameMaster" type="Node" parent="."]
 script = ExtResource("1_m0v3q")
 RightSideModel = true
 
-[node name="Initializer" type="Node" parent="."]
-script = ExtResource("1_0g1au")
+[node name="EndOfFrameProcessor" type="Node" parent="."]
+script = ExtResource("8_y0kdg")

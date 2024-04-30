@@ -1,49 +1,38 @@
+
 using Godot;
-using System;
 
-public partial class RewardHandler : Node, Observable
+public class RewardHandler : Singleton<RewardHandler>, Observable
 {
-    private int rewardNow;
-    private int rewardBefore;
-    public int Reward {
-        get {
-            int reward = rewardNow - rewardBefore;
-            rewardBefore = rewardNow;
-            return reward;
-        }
-    }
-
-	public override void _Ready()
-	{
-
-	}
-	
-	public override void _Process(double delta)
-	{
-		
-	}
-
+    private readonly int BounceReward = Config.Get().Data.Rewards.BounceReward;
+    private readonly int ScoreReward = Config.Get().Data.Rewards.ScoreReward;
+    private readonly int EnemyScorePenalty = Config.Get().Data.Rewards.EnemyScorePenalty;
+    private readonly int PaddlePositionReward = Config.Get().Data.Rewards.PaddlePositionReward;
+    private int reward;
+    public int Reward => this.reward;
 
     public void Notify(Event @event)
-    {   
-        rewardBefore = rewardNow;
-
+    {
         if (@event.Code == "SIDE.RIGHT.BOUNCE")
         {
-            rewardNow += 1;
+            this.reward += BounceReward;
         }
         else if (@event.Code == "SIDE.RIGHT.SCORE")
         {
-            rewardNow += 20;
+            this.reward += ScoreReward;
         }
         else if (@event.Code == "SIDE.LEFT.SCORE")
         {
-            rewardNow -= 20;
+            this.reward += EnemyScorePenalty;
         }
     }
 
-    public RewardHandler()
+    public void ResetReward()
+    {
+        this.reward = 0;
+    }
+
+    private RewardHandler()
 	{
-		
+		EventManager.Get().Subscribe(this);
 	}
 }

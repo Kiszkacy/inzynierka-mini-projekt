@@ -20,7 +20,7 @@ public partial class ScoreArea : Area2D
 	{
 		if (body is not Ball _) return;
 		
-		EventManager.Get().RegisterEvent(new Event(this.ScoreSide.GetCode()+".SCORE"));
+		EventManager.Get().RegisterEvent(new Event(this.ScoreSide.GetCode()+".SCORE.REQUEST"), emitAtTheEndOfFrame:true);
 	}
 
 	public ScoreArea()

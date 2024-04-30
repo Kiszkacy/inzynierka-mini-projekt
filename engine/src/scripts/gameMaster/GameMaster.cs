@@ -1,5 +1,4 @@
 ﻿using Godot;
-using System;
 
 public partial class GameMaster : Node, Observable
 {
@@ -27,10 +26,8 @@ public partial class GameMaster : Node, Observable
         }
         if (RightSideModel)
         {
-            this.rightAgent = new Model(
-                GetParent().GetNode<SocketHandler>("SocketHandler"), 
-                GetParent().GetNode<RewardHandler>("RewardHandler")
-                );
+            PipeHandler.Get().Connect();
+            this.rightAgent = new Model();
         }
         if (LeftSideBot || RightSideModel)
         {
@@ -104,6 +101,10 @@ public partial class GameMaster : Node, Observable
         else if (@event.Code == "SIDE.LEFT.WON" || @event.Code == "SIDE.RIGHT.WON")
         {
             this.ResetGame();
+        }
+        else if (@event.Code == "RESET.BALL.REQUEST")
+        {
+            this.ResetBall(Side.Left);
         }
     }
 

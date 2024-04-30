@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://src/scripts/scoreArea/ScoreArea.cs" id="1_rfgo5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rnxf5"]
-size = Vector2(64, 720)
+size = Vector2(320, 880)
 
 [node name="ScoreArea" type="Area2D"]
 collision_layer = 0
