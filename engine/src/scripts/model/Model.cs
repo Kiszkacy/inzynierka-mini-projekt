@@ -7,7 +7,6 @@ using Godot;
 
 public class Model : Agent, Observable
 {   
-	private readonly PipeHandler pipeHandler;
 	private readonly RewardHandler rewardHandler;
 	private bool hasGameEndedThisFrame;
 
@@ -22,11 +21,11 @@ public class Model : Agent, Observable
 		};
 		
 		byte[] rawData = JsonSerializer.Serialize(dict).ToUtf8Buffer(); 
-		this.pipeHandler.Send(rawData);
+		PipeHandler.Get().Send(rawData);
 		
 		if (this.hasGameEndedThisFrame) this.hasGameEndedThisFrame = false;
 
-		byte[] response = pipeHandler.Receive();
+		byte[] response = PipeHandler.Get().Receive();
 		int responseCode = BitConverter.ToInt16(response);
 		if (responseCode == -1)
 		{
@@ -44,9 +43,8 @@ public class Model : Agent, Observable
 		}
 	}
 
-	public Model(PipeHandler pipeHandler, RewardHandler rewardHandler)
+	public Model(RewardHandler rewardHandler)
 	{
-		this.pipeHandler = pipeHandler;
 		this.rewardHandler = rewardHandler;
 	}
 }

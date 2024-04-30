@@ -1,21 +1,41 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using System.IO.Pipes;
 
-public partial class PipeHandler : Node
+public class PipeHandler : Singleton<PipeHandler>
 {
-    [Export]
-    public string PipeName { get; set; } = "godot-python-pipe";
-    
-    private NamedPipeClientStream pipe;
-    private const int ReadBufferSize = 64; 
-
-    public override void _Ready()
+    public string PipeName
     {
-        //this.pipe = new NamedPipeClientStream(".", this.PipeName, PipeDirection.InOut);
-        //this.pipe.Connect();
-        GD.Print($"Connected to {this.PipeName} pipe.");
+        get => this.pipeName;
+        set
+        {
+            if (this.IsConnected) throw new Exception("Already connected! Disconnect first to change pipe name.");
+            this.pipeName = value;
+        }
     }
     
+    private string pipeName = "godot-python-pipe";
+    private NamedPipeClientStream pipe;
+    private const int ReadBufferSize = 64;
+    private bool IsConnected { get; set; } = false;
+    
+    public void Connect()
+    {
+        this.pipe = new NamedPipeClientStream(".", this.pipeName, PipeDirection.InOut);
+        this.pipe.Connect();
+        this.IsConnected = true;
+        GD.Print($"Connected to {this.pipeName} pipe.");
+    }
+    
+    public void Disconnect()
+    {
+        this.pipe.Close();
+        this.IsConnected = false;
+        GD.Print($"Disconnected from {this.pipeName} pipe.");
+    }
+    
+    public void Send(byte[] data) => this.pipe.Write(data, 0, data.Length);
+
     public byte[] Receive()
     {
         byte[] buffer = new byte[ReadBufferSize];
@@ -23,12 +43,7 @@ public partial class PipeHandler : Node
         return buffer;
     }
 
-    public void Send(byte[] data)
-    {
-        this.pipe.Write(data, 0, data.Length);
-    }
-
-    public PipeHandler()
+    private PipeHandler()
     {
         
     }

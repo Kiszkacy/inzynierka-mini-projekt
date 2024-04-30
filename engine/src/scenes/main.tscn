@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://d7ustprm3wu2"]
+[gd_scene load_steps=10 format=3 uid="uid://d7ustprm3wu2"]
 
 [ext_resource type="Script" path="res://src/scripts/initializer/Initializer.cs" id="1_0g1au"]
 [ext_resource type="Script" path="res://src/scripts/userInput/UserInput.cs" id="1_3rg1q"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://cm8xknxgxq0hw" path="res://src/scenes/scoreArea.tscn" id="2_qjncq"]
 [ext_resource type="PackedScene" uid="uid://dnuatv61x8rjy" path="res://src/scenes/scoreboard.tscn" id="2_ur8r8"]
 [ext_resource type="PackedScene" uid="uid://23xsw0lb2sex" path="res://src/scenes/paddle.tscn" id="2_uxnrb"]
-[ext_resource type="Script" path="res://src/scripts/pipeHandler/PipeHandler.cs" id="7_41dt4"]
 [ext_resource type="Script" path="res://src/scripts/rewardHandler/RewardHandler.cs" id="7_wkv8u"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_830k1"]
@@ -59,14 +58,12 @@ position = Vector2(1440, 360)
 [node name="UserInput" type="Node" parent="."]
 script = ExtResource("1_3rg1q")
 
-[node name="PipeHandler" type="Node" parent="."]
-script = ExtResource("7_41dt4")
-
 [node name="RewardHandler" type="Node" parent="."]
 script = ExtResource("7_wkv8u")
 
 [node name="GameMaster" type="Node" parent="."]
 script = ExtResource("1_m0v3q")
+RightSideModel = true
 
 [node name="Initializer" type="Node" parent="."]
 script = ExtResource("1_0g1au")
