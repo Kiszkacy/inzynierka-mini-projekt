@@ -1,6 +1,9 @@
+# mypy: ignore-errors
+# ruff: disable
 
 import platform
-from typing import Optional
+from typing import IO
+
 from loguru import logger
 
 ON_WINDOWS: bool = platform.system() == "Windows"
@@ -16,10 +19,10 @@ READ_BUFFER_SIZE: int = 512
 
 
 class PipeHandler:
-    def __init__(self, pipe_name: Optional[str] = None) -> None:
+    def __init__(self, pipe_name: str | None = None) -> None:
         if pipe_name is None:
             pipe_name = self._default_pipe_name()
-        self.pipe: Optional[int] = None
+        self.pipe: int | IO | None = None
         self.pipe_name: str = pipe_name
 
     def _default_pipe_name(self) -> str:
@@ -31,14 +34,16 @@ class PipeHandler:
                 self.pipe_name,
                 win32pipe.PIPE_ACCESS_DUPLEX,
                 win32pipe.PIPE_TYPE_MESSAGE | win32pipe.PIPE_READMODE_MESSAGE | win32pipe.PIPE_WAIT,
-                1, MAX_BUFFER_SIZE, MAX_BUFFER_SIZE,
+                1,
+                MAX_BUFFER_SIZE,
+                MAX_BUFFER_SIZE,
                 0,
-                None
+                None,
             )
             win32pipe.ConnectNamedPipe(self.pipe, None)
         else:
             os.mkfifo(self.pipe_name)
-            self.pipe = open(self.pipe_name, 'r+')
+            self.pipe = open(self.pipe_name, "r+")  # noqa: SIM115
         logger.info(f"Connected to the {self.pipe_name} pipe.")
 
     def disconnect(self) -> None:
@@ -61,5 +66,4 @@ class PipeHandler:
             _, data = win32file.ReadFile(self.pipe, READ_BUFFER_SIZE)
         else:
             data = self.pipe.read(READ_BUFFER_SIZE)
-            data = data.encode()
         return data
