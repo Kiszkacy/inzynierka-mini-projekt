@@ -24,7 +24,9 @@ Speed = 650.0
 
 [node name="Ball" parent="." instance=ExtResource("1_et8mo")]
 position = Vector2(640, 360)
-LaunchSpeed = 800.0
+LaunchSpeed = 750.0
+LaunchAngleRandomness = 25.0
+MinimalLaunchAngle = 5.0
 MaxSpeed = 1300.0
 
 [node name="Scoreboard" parent="." instance=ExtResource("2_ur8r8")]
