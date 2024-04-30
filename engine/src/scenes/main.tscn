@@ -4,10 +4,10 @@
 [ext_resource type="Script" path="res://src/scripts/userInput/UserInput.cs" id="1_3rg1q"]
 [ext_resource type="PackedScene" uid="uid://b15ehe6xcqggu" path="res://src/scenes/ball.tscn" id="1_et8mo"]
 [ext_resource type="Script" path="res://src/scripts/gameMaster/GameMaster.cs" id="1_m0v3q"]
-[ext_resource type="Script" path="res://src/scripts/socketHandler/SocketHandler.cs" id="1_tibqi"]
 [ext_resource type="PackedScene" uid="uid://cm8xknxgxq0hw" path="res://src/scenes/scoreArea.tscn" id="2_qjncq"]
 [ext_resource type="PackedScene" uid="uid://dnuatv61x8rjy" path="res://src/scenes/scoreboard.tscn" id="2_ur8r8"]
 [ext_resource type="PackedScene" uid="uid://23xsw0lb2sex" path="res://src/scenes/paddle.tscn" id="2_uxnrb"]
+[ext_resource type="Script" path="res://src/scripts/pipeHandler/PipeHandler.cs" id="7_41dt4"]
 [ext_resource type="Script" path="res://src/scripts/rewardHandler/RewardHandler.cs" id="7_wkv8u"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_830k1"]
@@ -17,14 +17,16 @@ size = Vector2(1280, 256)
 
 [node name="LeftPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(32, 360)
-Speed = 500.0
+Speed = 650.0
 
 [node name="RightPaddle" parent="." instance=ExtResource("2_uxnrb")]
 position = Vector2(1248, 360)
-Speed = 500.0
+Speed = 650.0
 
 [node name="Ball" parent="." instance=ExtResource("1_et8mo")]
 position = Vector2(640, 360)
+LaunchSpeed = 800.0
+MaxSpeed = 1300.0
 
 [node name="Scoreboard" parent="." instance=ExtResource("2_ur8r8")]
 position = Vector2(640, 64)
@@ -57,15 +59,14 @@ position = Vector2(1440, 360)
 [node name="UserInput" type="Node" parent="."]
 script = ExtResource("1_3rg1q")
 
-[node name="SocketHandler" type="Node" parent="."]
-script = ExtResource("1_tibqi")
+[node name="PipeHandler" type="Node" parent="."]
+script = ExtResource("7_41dt4")
 
 [node name="RewardHandler" type="Node" parent="."]
 script = ExtResource("7_wkv8u")
 
 [node name="GameMaster" type="Node" parent="."]
 script = ExtResource("1_m0v3q")
-RightSideModel = true
 
 [node name="Initializer" type="Node" parent="."]
 script = ExtResource("1_0g1au")

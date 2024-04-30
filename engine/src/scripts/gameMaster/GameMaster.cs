@@ -28,7 +28,7 @@ public partial class GameMaster : Node, Observable
         if (RightSideModel)
         {
             this.rightAgent = new Model(
-                GetParent().GetNode<SocketHandler>("SocketHandler"), 
+                GetParent().GetNode<PipeHandler>("PipeHandler"), 
                 GetParent().GetNode<RewardHandler>("RewardHandler")
                 );
         }
