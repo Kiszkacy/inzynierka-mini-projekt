@@ -1,0 +1,16 @@
+﻿pipe:
+  name: 'godot-python-pipe'
+  bufferSize: 64
+rewards:
+  bounceReward: 100
+  scoreReward: 2000
+  enemyScorePenalty: -2000
+  paddlePositionReward: 1
+engine:
+  timeScale: 3.0 # multiplier
+  ticksPerSecond: 60
+game:
+  maxScore: null # null means: use in-editor value
+  ballPositionHistoryBufferSize: 5
+  ballStuckThreshold: 5.0 # in px
+  ballFlewThroughMovementSlowdown: 0.5 # multiplier
