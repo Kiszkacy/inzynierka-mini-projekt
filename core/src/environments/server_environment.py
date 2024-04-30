@@ -3,15 +3,15 @@ import json
 import torch
 
 from core.src.environments.environment import Environment
-from core.src.socket_server_thread import SocketServerThread
+from core.src.pipe_handler.pipe_handler import PipeHandler
 
 
 class ServerEnvironment(Environment):
     counter = 0
 
     def __init__(self):
-        self.server_thread = SocketServerThread("localhost", 12345)
-        self.server_thread.start()
+        self.pipe_handler: PipeHandler = PipeHandler()
+        self.pipe_handler.connect()
         self._state: torch.Tensor | None = None
 
     def step(self, action: int) -> tuple[torch.Tensor, float, bool]:
@@ -22,14 +22,11 @@ class ServerEnvironment(Environment):
         Reward for performing the action,
         Whether the game ended or not
         """
-        self.server_thread.send(action.to_bytes())
+        self.pipe_handler.send(action.to_bytes())
         return self.request_data()
 
     def request_data(self):
-        while not self.server_thread.received_request:
-            ...
-
-        data: bytes = self.server_thread.get_request()
+        data: bytes = self.pipe_handler.receive()
         decoded_data = json.loads(data.decode())
         state = decoded_data["state"]
         reward = decoded_data["reward"]

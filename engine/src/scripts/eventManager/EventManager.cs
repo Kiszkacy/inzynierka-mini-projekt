@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 public sealed class EventManager : Singleton<EventManager>
 {
@@ -48,5 +47,10 @@ public sealed class EventManager : Singleton<EventManager>
         if (!this.observers.Contains(observer)) return;
         
         this.observers.Remove(observer);
+    }
+
+    private EventManager()
+    {
+        
     }
 }

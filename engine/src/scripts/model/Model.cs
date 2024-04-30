@@ -7,9 +7,8 @@ using Godot;
 
 public class Model : Agent, Observable
 {   
-    private SocketHandler socketHandler;
-    private RewardHandler rewardHandler;
-    private bool gameEnded;
+	private readonly RewardHandler rewardHandler;
+	private bool hasGameEndedThisFrame;
 
 	public Action GetAction(Side side, double leftPaddlePosition, double rightPaddlePosition, Vector2 ballPosition, Vector2 ballVelocity)
 	{   
@@ -18,32 +17,34 @@ public class Model : Agent, Observable
 		Dictionary<string, object> dict = new Dictionary<string, object>{
 			["state"] = state,
 			["reward"] = rewardHandler.Reward,
-			["is_done"] = gameEnded,
+			["is_done"] = hasGameEndedThisFrame,
 		};
 		
 		byte[] rawData = JsonSerializer.Serialize(dict).ToUtf8Buffer(); 
-		socketHandler.Send(rawData, rawData.Length);
-		byte[] response = socketHandler.Receive();
-		gameEnded = false;
-		int value = BitConverter.ToInt16(response);
-		if (value == -1){
+		PipeHandler.Get().Send(rawData);
+		
+		if (this.hasGameEndedThisFrame) this.hasGameEndedThisFrame = false;
+
+		byte[] response = PipeHandler.Get().Receive();
+		int responseCode = BitConverter.ToInt16(response);
+		if (responseCode == -1)
+		{
 			EventManager.Get().RegisterEvent(new Event("RESET"));
 			return Action.None;
 		}
-		return (Action)value;
+		return (Action)responseCode;
 	}
 
 	public void Notify(Event @event)
 	{
 		if (@event.Code == "SIDE.LEFT.WON" || @event.Code == "SIDE.RIGHT.WON")
 		{
-			gameEnded = true;
+			hasGameEndedThisFrame = true;
 		}
 	}
 
-	public Model(SocketHandler socketHandler, RewardHandler rewardHandler)
+	public Model(RewardHandler rewardHandler)
 	{
-		this.socketHandler = socketHandler;
 		this.rewardHandler = rewardHandler;
 	}
 }

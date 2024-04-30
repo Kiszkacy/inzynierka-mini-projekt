@@ -27,10 +27,10 @@ public partial class GameMaster : Node, Observable
         }
         if (RightSideModel)
         {
+            PipeHandler.Get().Connect();
             this.rightAgent = new Model(
-                GetParent().GetNode<SocketHandler>("SocketHandler"), 
                 GetParent().GetNode<RewardHandler>("RewardHandler")
-                );
+            );
         }
         if (LeftSideBot || RightSideModel)
         {
