@@ -6,4 +6,10 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>PingPong</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="src\config.yaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="YamlDotNet" Version="15.1.2" />
+  </ItemGroup>
 </Project>
