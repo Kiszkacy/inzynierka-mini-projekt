@@ -5,7 +5,7 @@ public partial class Initializer : Node
 {
 	public override void _Ready()
 	{	
-		Engine.TimeScale = 3.5;
+		Engine.TimeScale = 3.0;
 		Engine.PhysicsTicksPerSecond = 60;
 		GD.Print("OK!");
 	}
