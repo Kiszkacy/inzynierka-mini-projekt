@@ -24,14 +24,14 @@ public class PipeHandler : Singleton<PipeHandler>
         this.pipe = new NamedPipeClientStream(".", this.pipeName, PipeDirection.InOut);
         this.pipe.Connect();
         this.IsConnected = true;
-        GD.Print($"Connected to {this.pipeName} pipe.");
+        GD.Print($"Connected to '{this.pipeName}' pipe.");
     }
     
     public void Disconnect()
     {
         this.pipe.Close();
         this.IsConnected = false;
-        GD.Print($"Disconnected from {this.pipeName} pipe.");
+        GD.Print($"Disconnected from '{this.pipeName}' pipe.");
     }
     
     public void Send(byte[] data) => this.pipe.Write(data, 0, data.Length);
