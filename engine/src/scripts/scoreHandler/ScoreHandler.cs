@@ -1,5 +1,3 @@
-using Godot;
-using System;
 
 public enum Side
 {
@@ -21,42 +19,14 @@ public static class SideExtensions
 	}
 }
 
-public partial class ScoreHandler : Node, Observable
+public class ScoreHandler : Singleton<ScoreHandler>, Observable
 {
-	[Export] 
-	public int MaxScore { get; set; } = 5;
-	
-	public int ScoreLeft { get; set; }
-	public int ScoreRight { get; set; }
-	
-	[Export] 
-	public bool ShowScoreboard { get; set; } = true;
-	
-	private Label ScoreLeftLabel { get; set; }
-	private Label ScoreRightLabel { get; set; }
-	
-	public override void _Ready()
-	{
-		EventManager.Get().Subscribe(this);
-		if (this.ShowScoreboard)
-		{
-			this.ScoreLeftLabel = GetNode<Label>("Root/Rows/ScoreRow/ScoreLeft");
-			this.ScoreRightLabel = GetNode<Label>("Root/Rows/ScoreRow/ScoreRight");
-			this.UpdateLabels();
-		}
-		else
-		{
-			Control root = GetNode<Control>("Root");
-			root.Visible = false;
-			root.ProcessMode = ProcessModeEnum.Disabled;
-		}
-	}
+	public int MaxScore { get; set;  } = 5;
 
-	public override void _Process(double delta)
-	{
-		
-	}
+	public ObservableValue<int> ScoreLeft { get; } = new(0);
 	
+	public ObservableValue<int> ScoreRight { get; } = new(0);
+
 	public void Notify(Event @event)
 	{
 		if (@event.Code == "SIDE.LEFT.SCORE")
@@ -75,22 +45,14 @@ public partial class ScoreHandler : Node, Observable
 
 	public void IncreaseScoreLeft()
 	{
-		this.ScoreLeft += 1;
+		this.ScoreLeft.Value += 1;
 		this.CheckIfWon(Side.Left);
-		if (this.ShowScoreboard)
-		{
-			this.UpdateLabels();
-		}
 	}
 
 	public void IncreaseScoreRight()
 	{
-		this.ScoreRight += 1;
+		this.ScoreRight.Value += 1;
 		this.CheckIfWon(Side.Right);
-		if (this.ShowScoreboard)
-		{
-			this.UpdateLabels();
-		}
 	}
 	
 	public void IncreaseScore(Side side)
@@ -107,34 +69,24 @@ public partial class ScoreHandler : Node, Observable
 
 	private void CheckIfWon(Side side)
 	{
-		if (side == Side.Left && this.ScoreLeft == this.MaxScore)
+		if (side == Side.Left && this.ScoreLeft.Value == this.MaxScore)
 		{
 			EventManager.Get().RegisterEvent(new Event("SIDE.LEFT.WON"));
 		}
-		else if (side == Side.Right && this.ScoreRight == this.MaxScore)
+		else if (side == Side.Right && this.ScoreRight.Value == this.MaxScore)
 		{
 			EventManager.Get().RegisterEvent(new Event("SIDE.RIGHT.WON"));
 		}
 	}
 
-	private void UpdateLabels()
-	{
-		this.ScoreLeftLabel.Text = this.ScoreLeft.ToString();
-		this.ScoreRightLabel.Text = this.ScoreRight.ToString();
-	}
-
 	private void ResetScores()
 	{
-		this.ScoreLeft = 0;
-		this.ScoreRight = 0;
-		if (this.ShowScoreboard)
-		{
-			this.UpdateLabels();
-		}
+		this.ScoreLeft.Value = 0;
+		this.ScoreRight.Value = 0;
 	}
 
-	public ScoreHandler()
+	private ScoreHandler()
 	{
-		
+		EventManager.Get().Subscribe(this);
 	}
 }
