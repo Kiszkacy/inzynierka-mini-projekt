@@ -37,19 +37,18 @@ public class CommandLineReader
 			else
 			{
 				argumentName = userArguments[index];
-				if (valueArguments.Contains(argumentName))
-				{
-					argumentValue = userArguments[index + 1];
-					index++;
-				}
-
 				if (!argumentName.StartsWith(argumentPrefix))
 				{
 					GD.Print($"Commandline parse error: argument='{argumentName}' name does not start with '{argumentPrefix}'.");
 					continue;
 				} 
-				
 				argumentName = argumentName.Remove(0, argumentPrefix.Length);
+				
+				if (valueArguments.Contains(argumentName))
+				{
+					argumentValue = userArguments[index + 1];
+					index++;
+				}
 			}
 
 			UpdateConfig(argumentName, argumentValue);
