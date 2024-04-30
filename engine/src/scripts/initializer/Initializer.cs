@@ -23,6 +23,7 @@ public partial class Initializer : Node
 
 	private void LoadSingletons() // this method loads singletons that are required to be loaded in a specific order
 	{
+		Config.Get();
 		EventManager.Get();
 	}
 
