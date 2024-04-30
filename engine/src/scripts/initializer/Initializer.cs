@@ -29,8 +29,8 @@ public partial class Initializer : Node
 
 	private void SetupEngineSettings()
 	{
-		Engine.TimeScale = 3.0;
-		Engine.PhysicsTicksPerSecond = 60;
+		Engine.TimeScale = Config.Get().Data.Engine.TimeScale;
+		Engine.PhysicsTicksPerSecond = Config.Get().Data.Engine.TicksPerSecond;
 	}
 
 	public Initializer()

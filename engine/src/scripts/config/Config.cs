@@ -49,7 +49,7 @@ public class RewardsConfig
 
 public class EngineConfig
 {
-    public double TimeScale { get; set; }
+    public float TimeScale { get; set; }
     public int TicksPerSecond { get; set; }
 }
 
@@ -57,6 +57,6 @@ public class GameConfig
 {
     public int? MaxScore { get; set; }
     public int BallPositionHistoryBufferSize { get; set; }
-    public double BallStuckThreshold { get; set; }
-    public double BallFlewThroughMovementSlowdown { get; set; }
+    public float BallStuckThreshold { get; set; }
+    public float BallFlewThroughMovementSlowdown { get; set; }
 }
