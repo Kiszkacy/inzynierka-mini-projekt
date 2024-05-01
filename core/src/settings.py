@@ -1,9 +1,41 @@
 import functools
+import inspect
+import logging
+import sys
 from pathlib import Path
 
 from loguru import logger
 from pydantic import DirectoryPath, Field, FilePath, ValidationError, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def configure_logging():
+    class InterceptHandler(logging.Handler):
+        def emit(self, record: logging.LogRecord) -> None:
+            # Get corresponding Loguru level if it exists.
+            level: str | int
+            try:
+                level = logger.level(record.levelname).name
+            except ValueError:
+                level = record.levelno
+
+            # Find caller from where originated the logged message.
+            frame, depth = inspect.currentframe(), 0
+            while frame and (depth == 0 or frame.f_code.co_filename == logging.__file__):
+                frame = frame.f_back
+                depth += 1
+
+            logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+
+    logger.remove()
+    logger.add(sys.stderr, level="INFO", backtrace=True, diagnose=True)
+
+    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+    logging.getLogger("ray").handlers = [InterceptHandler()]
+    logging.getLogger("ray.tune").handlers = [InterceptHandler()]
+    logging.getLogger("ray.rllib").handlers = [InterceptHandler()]
+    logging.getLogger("ray.train").handlers = [InterceptHandler()]
+    logging.getLogger("ray.serve").handlers = [InterceptHandler()]
 
 
 class GodotSettings(BaseSettings):
@@ -37,6 +69,8 @@ class CoreSettings(BaseSettings):
 @functools.lru_cache(maxsize=1)
 def get_settings() -> CoreSettings:
     """Loads settings from .env file."""
+    configure_logging()
+
     try:
         settings = CoreSettings()
         logger.success("Successfully loaded core settings.")

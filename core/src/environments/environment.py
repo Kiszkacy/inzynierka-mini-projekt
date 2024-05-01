@@ -1,10 +1,15 @@
-import torch
+import abc
+from typing import Any, TypeVar
+
+import gymnasium as gym
+
+ObsType = TypeVar("ObsType")
+ActType = TypeVar("ActType")
 
 
-class Environment:
-    counter = 0
-
-    def step(self, action: int) -> tuple[torch.Tensor, float, bool]:
+class Environment(abc.ABC, gym.Env[ObsType, ActType]):
+    @abc.abstractmethod
+    def step(self, action: ActType) -> tuple[ObsType, float, bool, bool, dict[str, Any]]:
         """
         :param action: Action to be performed in the environment.
         :return: tuple of:
@@ -12,9 +17,10 @@ class Environment:
         Reward for performing the action,
         Whether the game ended or not
         """
-        self.counter += 1
-        return self.state, action, self.counter % 40 == 0
+
+    @abc.abstractmethod
+    def reset(self, *, seed: int | None = None, options=None) -> tuple[ObsType, dict[str, Any]]: ...
 
     @property
-    def state(self) -> torch.Tensor:
-        return torch.rand(size=[6])
+    @abc.abstractmethod
+    def state(self) -> ObsType: ...
