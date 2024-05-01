@@ -33,5 +33,7 @@ if __name__ == "__main__":
 
     algo = config.build()
 
-    for _ in range(5):
+    for _ in range(100):
         logger.info(algo.train())
+
+    # To save a model call: algo.save(checkpoint_dir='./model/')

@@ -10,13 +10,13 @@ from core.src.settings import get_settings
 
 
 class GodotHandler:
-    pipe_name_format = "python-godot-{thread_id}-{instance_id}"
+    pipe_name_format: str = "python-godot-{thread_id}-{instance_id}"
     godot_executable: Path = get_settings().godot.godot_executable
     instance_counter: int = 0
-    counter_lock = threading.Lock()
+    counter_lock: threading.Lock = threading.Lock()
 
     def __init__(self, project_path: str | None = None):
-        self.project_path = get_settings().godot.project_path if project_path is None else project_path
+        self.project_path: str | Path = get_settings().godot.project_path if project_path is None else project_path
         self.godot_thread: threading.Thread | None = None
         self.pipe_name: str = self.get_pipe_name()
         self.pipe_handler: PipeHandler = PipeHandler(pipe_name=self.pipe_name)
@@ -37,6 +37,7 @@ class GodotHandler:
         decoded_data = data.decode()
         return json.loads(decoded_data)
 
+    @logger.catch(reraise=True)
     def launch_godot(self):
         godot_args = [
             "--path",
@@ -61,3 +62,6 @@ class GodotHandler:
             logger.error("Error running Godot project:", e)
         else:
             self.pipe_handler.connect()
+
+    def __del__(self):
+        self.pipe_handler.disconnect()

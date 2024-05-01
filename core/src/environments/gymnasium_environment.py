@@ -11,10 +11,9 @@ class GymnasiumServerEnvironment(Environment[np.ndarray, np.integer]):
     observation_space = Box(low=-(2**60), high=2**60, shape=(6,), dtype=np.float32)
 
     def __init__(self, config: dict | None = None):  # noqa: ARG002
-        self.godot_handler = GodotHandler()
         self._state: np.ndarray | None = None
-        self.initialized = False
-        self.init()
+        self.godot_handler = GodotHandler()
+        self.godot_handler.launch_godot()
 
     def step(self, action: np.integer) -> tuple[np.ndarray, float, bool, bool, dict]:
         """
@@ -48,10 +47,6 @@ class GymnasiumServerEnvironment(Environment[np.ndarray, np.integer]):
         if self._state is None:
             self._state = self.get_data()[0]
         return self._state
-
-    def init(self) -> None:
-        self.godot_handler.launch_godot()
-        self.initialized = True
 
     @property
     def default_state(self) -> np.ndarray:
