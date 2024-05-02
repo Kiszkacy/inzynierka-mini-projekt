@@ -21,17 +21,18 @@ READ_BUFFER_SIZE: int = 512
 class PipeHandler:
     def __init__(self, pipe_name: str | None = None) -> None:
         if pipe_name is None:
-            pipe_name = self._default_pipe_name()
+            pipe_name = "godot-python-pipe"
         self.pipe: int | IO | None = None
-        self.pipe_name: str = pipe_name
+        self.pipe_path: str = self._default_pipe_prefix.format(pipe_name=pipe_name)
 
-    def _default_pipe_name(self) -> str:
-        return r"\\.\pipe\godot-python-pipe" if ON_WINDOWS else "/tmp/godot-python-pipe"
+    @property
+    def _default_pipe_prefix(self) -> str:
+        return r"\\.\pipe\{pipe_name}" if ON_WINDOWS else "/tmp/{pipe_name}"
 
     def connect(self) -> None:
         if ON_WINDOWS:
             self.pipe = win32pipe.CreateNamedPipe(
-                self.pipe_name,
+                self.pipe_path,
                 win32pipe.PIPE_ACCESS_DUPLEX,
                 win32pipe.PIPE_TYPE_MESSAGE | win32pipe.PIPE_READMODE_MESSAGE | win32pipe.PIPE_WAIT,
                 1,
@@ -42,9 +43,9 @@ class PipeHandler:
             )
             win32pipe.ConnectNamedPipe(self.pipe, None)
         else:
-            os.mkfifo(self.pipe_name)
-            self.pipe = open(self.pipe_name, "r+")  # noqa: SIM115
-        logger.info(f"Connected to the {self.pipe_name} pipe.")
+            os.mkfifo(self.pipe_path)
+            self.pipe = open(self.pipe_path, "r+")  # noqa: SIM115
+        logger.info(f"Connected to the {self.pipe_path} pipe.")
 
     def disconnect(self) -> None:
         if ON_WINDOWS:

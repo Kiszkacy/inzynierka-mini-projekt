@@ -1,16 +1,11 @@
-from pathlib import Path
+import abc
 
 from core.src.environments.environment import Environment
-from core.src.policies.policy_network import PolicyNetwork
 
 
-class Agent:
-    def __init__(self, policy_network: PolicyNetwork, environment: Environment):
-        self.policy_network = policy_network
-        self.environment = environment
+class Agent(abc.ABC):
+    def __init__(self, environment_cls: type[Environment]):
+        self.environment_cls = environment_cls
 
-    def load(self, path: Path): ...
-
+    @abc.abstractmethod
     def act(self, state): ...
-
-    def train(self): ...
