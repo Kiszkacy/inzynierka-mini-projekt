@@ -8,9 +8,9 @@ public class Model : Agent, Observable
 {   
 	private bool hasGameEndedThisFrame;
 
-	public Action GetAction(Side side, double leftPaddlePosition, double rightPaddlePosition, Vector2 ballPosition, Vector2 ballVelocity)
+	public Action GetAction(double paddlePosition, Vector2 ballPosition, Vector2 ballVelocity)
 	{   
-		double[] state = {leftPaddlePosition, rightPaddlePosition, ballPosition.X, ballPosition.Y, ballVelocity.X, ballVelocity.Y};
+		double[] state = {paddlePosition, ballPosition.X, ballPosition.Y, ballVelocity.X, ballVelocity.Y};
 		
 		Dictionary<string, object> dict = new Dictionary<string, object>{
 			["state"] = state,
