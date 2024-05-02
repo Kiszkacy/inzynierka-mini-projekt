@@ -2,13 +2,16 @@ import numpy as np
 from gymnasium.spaces import Box, Discrete
 
 from core.src.environments.environment import Environment
+from core.src.settings import get_settings
 from core.src.utils.godot_handler import GodotHandler
 
 
 class GymnasiumServerEnvironment(Environment[np.ndarray, np.integer]):
-    action_space = Discrete(2)
+    action_space = Discrete(get_settings().environment.action_space_range)
     # probably should be something more accurate
-    observation_space = Box(low=-(2**60), high=2**60, shape=(5,), dtype=np.float32)
+    observation_space = Box(
+        low=-(2**60), high=2**60, shape=(get_settings().environment.observation_space_size,), dtype=np.float32
+    )
 
     def __init__(self, config: dict | None = None):  # noqa: ARG002
         self._state: np.ndarray | None = None
@@ -50,4 +53,4 @@ class GymnasiumServerEnvironment(Environment[np.ndarray, np.integer]):
 
     @property
     def default_state(self) -> np.ndarray:
-        return np.random.default_rng().random(size=6)
+        return np.random.default_rng().random(size=get_settings().environment.observation_space_size)
