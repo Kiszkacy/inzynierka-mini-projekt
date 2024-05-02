@@ -68,9 +68,7 @@ public partial class GameMaster : Node, Observable
 		if (LeftPaddleControl != PaddleControl.Player)
 		{
 			Action action = this.leftAgent.GetAction(
-				Side.Left, 
-				leftPaddle.GlobalPosition.Y, 
-				rightPaddle.GlobalPosition.Y, 
+				leftPaddle.GlobalPosition.Y,
 				ball.GlobalPosition,
 				ball.Velocity
 			);
@@ -79,8 +77,6 @@ public partial class GameMaster : Node, Observable
 		if (RightPaddleControl != PaddleControl.Player)
 		{
 			Action action = this.rightAgent.GetAction(
-				Side.Right, 
-				leftPaddle.GlobalPosition.Y, 
 				rightPaddle.GlobalPosition.Y, 
 				ball.GlobalPosition,
 				ball.Velocity

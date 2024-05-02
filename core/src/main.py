@@ -10,7 +10,7 @@ if __name__ == "__main__":
     logger.info(f"Using {DEVICE=}")
 
     env = ServerEnvironment()
-    policy = PongPolicyNetwork(6, 2)
+    policy = PongPolicyNetwork(5, 2)
     agent = PongAgent(policy_network=policy, environment=env)
 
     agent.train()
