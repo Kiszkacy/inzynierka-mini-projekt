@@ -8,7 +8,7 @@ from core.src.utils.godot_handler import GodotHandler
 class GymnasiumServerEnvironment(Environment[np.ndarray, np.integer]):
     action_space = Discrete(2)
     # probably should be something more accurate
-    observation_space = Box(low=-(2**60), high=2**60, shape=(6,), dtype=np.float32)
+    observation_space = Box(low=-(2**60), high=2**60, shape=(5,), dtype=np.float32)
 
     def __init__(self, config: dict | None = None):  # noqa: ARG002
         self._state: np.ndarray | None = None
