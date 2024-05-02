@@ -30,8 +30,8 @@ This project uses PyTorch. If you want to leverage GPU acceleration for faster p
 ## Configuration
 
 1. **Create Environment File:** Copy the provided `env.template` file and rename it to `.env` in the `Core` directory.
-2. **Set Configuration Values:** Edit the `.env` file and provide values for the configuration settings as prompted by the comments within the file.
-
+2. **Set Configuration Values:** Edit the `.env` file and provide values for the configuration settings as prompted by the comments within the file. 
+Additional configuration options can be found in `settings.yaml` file.
 ## Usage
 
 To run the Core Module, execute the `main.py` script in your terminal:
