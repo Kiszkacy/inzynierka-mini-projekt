@@ -23,11 +23,11 @@ public class Config : Singleton<Config>
 
 public class ConfigData
 {
-    public PipeConfig Pipe => new();
-    public RewardsConfig Rewards => new();
-    public EngineConfig Engine => new();
-    public GameConfig Game => new();
-    public TestsConfig Tests => new();
+    public PipeConfig Pipe { get; set; } = new();
+    public RewardsConfig Rewards { get; set; } = new();
+    public EngineConfig Engine { get; set; } = new();
+    public GameConfig Game { get; set; } = new();
+    public TestsConfig Tests { get; set; } = new();
     
     public static ConfigData Load(string path)
     {
