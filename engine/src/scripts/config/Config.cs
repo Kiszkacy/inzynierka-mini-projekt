@@ -72,6 +72,7 @@ public class TestsConfig
 {
     public bool RunTests { get; set; }
     public bool RunTestsWhenOpenedViaCommandLine { get; set; }
+    public bool RunSlowTests { get; set; }
     public bool PassUncertainTestsWhenFailed { get; set; }
     public bool PrintAdditionalLogs { get; set; }
 }

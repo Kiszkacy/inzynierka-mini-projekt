@@ -17,5 +17,6 @@ game:
 tests:
   runTests: true
   runTestsWhenOpenedViaCommandLine: false
+  runSlowTests: true
   passUncertainTestsWhenFailed: true
   printAdditionalLogs: true
