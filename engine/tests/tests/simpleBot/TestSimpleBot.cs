@@ -17,7 +17,7 @@ public class TestSimpleBot : TestClass<TestSimpleBot>
         Action action = bot.GetAction(paddlePosition: 0.0f, ballPosition: ballPosition, ballVelocity: ballVelocity);
 
         // then
-        Debug.Assert(action == Action.Down); // TODO debug asserts wont work on production
+        Assert.IsTrue(action == Action.Down); // TODO writing own correctly working assert is kinda pointless
     }
     
     [Test]
@@ -33,7 +33,7 @@ public class TestSimpleBot : TestClass<TestSimpleBot>
         Action action = bot.GetAction(paddlePosition: 0.0f, ballPosition: ballPosition, ballVelocity: ballVelocity);
 
         // then
-        Debug.Assert(action == Action.Up); // TODO debug asserts wont work on production
+        Assert.IsTrue(action == Action.Up); // TODO writing own correctly working assert is kinda pointless
     }
 
     private class MockSimpleBot : SimpleBot
