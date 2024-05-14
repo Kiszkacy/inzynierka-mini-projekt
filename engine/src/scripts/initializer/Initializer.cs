@@ -10,7 +10,7 @@ public partial class Initializer : Node
 		GD.Print("Initializer: Setting up engine settings.");
 		this.SetupEngineSettings();
 		GD.Print("Initializer: Initial load complete.");
-		if ((CommandLineReader.OpenedViaCommandLine && Config.Get().Tests.RunTests) || (!CommandLineReader.OpenedViaCommandLine && Config.Get().Tests.RunTestsWhenOpenedViaCommandLine))
+		if ((!CommandLineReader.OpenedViaCommandLine && Config.Get().Tests.RunTests) || (CommandLineReader.OpenedViaCommandLine && Config.Get().Tests.RunTestsWhenOpenedViaCommandLine))
 		{
 			GD.Print("Initializer: Starting tests.");
 			this.RunTests();
