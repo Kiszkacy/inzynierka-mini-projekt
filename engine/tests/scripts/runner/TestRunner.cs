@@ -57,17 +57,14 @@ public class TestRunner : Singleton<TestRunner>
 	    NeatPrinter.Start().Print("[TESTS]  | STARTING").End();
 	    
 	    int testCount = this.GetTestCount();
-	    
 	    NeatPrinter.Start().Print($"[TESTS]  | DETECTED {testCount} TESTS").End();
 	    
 	    int suitableTestCount = this.GetSuitableTestCount();
-	    
 	    if (suitableTestCount != testCount)
 			NeatPrinter.Start().Print($"[TESTS]  | REJECTED {testCount - suitableTestCount} TESTS DUE TO THE TEST RUN SETTINGS").End();
 
 	    List<Type> testClasses = this.GetTestClasses();
 	    List<List<Type>> layers = this.testLayerer.GetTestLayers(testClasses);
-	    
 	    NeatPrinter.Start().Print($"[TESTS]  | CREATED {layers.Count} TEST LAYERS OUT OF {testClasses.Count} TEST CLASSES").End();
 	    
 	    NeatPrinter.Start().Print("[TESTS]  | STARTING").End();
@@ -81,8 +78,7 @@ public class TestRunner : Singleton<TestRunner>
 
 	    DateTime endTime = DateTime.Now;
 	    TimeSpan timeDifference = endTime - startTime;
-	    
-		NeatPrinter.Start()
+	    NeatPrinter.Start()
 			.Print("[TESTS]  | PASSED (")
 		    .ColorPrint(this.testsPassed == this.testNumber ? ConsoleColor.Green : ConsoleColor.Red, $"{this.testsPassed}")
 		    .Print("/")

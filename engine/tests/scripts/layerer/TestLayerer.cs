@@ -4,7 +4,6 @@ using System;
 
 using System.Reflection;
 
-
 public  class TestLayerer
 {
     private readonly List<Type> queue = new();
@@ -14,7 +13,7 @@ public  class TestLayerer
 
     public List<List<Type>> GetTestLayers(List<Type> tests)
     {
-        GetBeforeDictionary(tests);
+        this.GetBeforeDictionary(tests);
 
         foreach (Type test in tests)
         {

@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-public abstract class TestClass<T>
-    where T : TestClass<T>, new()
+public abstract class TestClass<T> : Singleton<T> where T : TestClass<T>
 {
     public void Run()
     {
         foreach (MethodInfo method in typeof(T).GetMethods())
         {
-            if (!method.GetCustomAttributes(typeof(TestAttribute), false).Any()) continue; // look for [Test] attribute
-            if (!Config.Get().Tests.RunSlowTests && method.GetCustomAttributes(typeof(TestSlowAttribute), false).Any()) continue; // skip slow tests if inactive
+            bool isTestMethod = method.GetCustomAttributes(typeof(TestAttribute), false).Any();
+            if (!isTestMethod) continue;
+
+            bool isSlowTest = method.GetCustomAttributes(typeof(TestSlowAttribute), false).Any();
+            if (!Config.Get().Tests.RunSlowTests && isSlowTest) continue;
             
             try
             {
@@ -20,7 +22,8 @@ public abstract class TestClass<T>
             }
             catch (TargetInvocationException exception)
             {
-                if (Config.Get().Tests.PassUncertainTestsWhenFailed && method.GetCustomAttributes(typeof(TestUncertainAttribute), false).Any()) // warning if uncertain failed
+                bool isUncertainTest = method.GetCustomAttributes(typeof(TestUncertainAttribute), false).Any();
+                if (Config.Get().Tests.PassUncertainTestsWhenFailed && isUncertainTest)
                     this.LogWarning($"{typeof(T).FullName} | {method.Name} :: [TestUncertain] {exception.GetBaseException().Message}");
                 else
                     this.LogFailed($"{typeof(T).FullName} | {method.Name} :: {exception.GetBaseException().Message}");
