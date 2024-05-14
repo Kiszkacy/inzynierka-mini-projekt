@@ -60,3 +60,11 @@ public class GameConfig
     public float BallStuckThreshold { get; set; }
     public float BallFlewThroughMovementSlowdown { get; set; }
 }
+
+public class TestsConfig
+{
+    public bool RunTests { get; set; }
+    public bool RunTestsWhenOpenedViaCommandLine { get; set; }
+    public bool PassUncertainTestsWhenFailed { get; set; }
+    public bool PrintAdditionalLogs { get; set; }
+}
