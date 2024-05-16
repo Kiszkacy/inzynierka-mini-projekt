@@ -8,6 +8,12 @@ public class Config : Singleton<Config>
     private string configPath = "./src/config.yaml";
     
     public ConfigData Data { get; }
+    
+    public PipeConfig Pipe => this.Data.Pipe;
+    public RewardsConfig Rewards => this.Data.Rewards;
+    public EngineConfig Engine => this.Data.Engine;
+    public GameConfig Game => this.Data.Game;
+    public TestsConfig Tests => this.Data.Tests;
 
     private Config()
     {
@@ -21,6 +27,7 @@ public class ConfigData
     public RewardsConfig Rewards { get; set; } = new();
     public EngineConfig Engine { get; set; } = new();
     public GameConfig Game { get; set; } = new();
+    public TestsConfig Tests { get; set; } = new();
     
     public static ConfigData Load(string path)
     {
@@ -59,4 +66,13 @@ public class GameConfig
     public int BallPositionHistoryBufferSize { get; set; }
     public float BallStuckThreshold { get; set; }
     public float BallFlewThroughMovementSlowdown { get; set; }
+}
+
+public class TestsConfig
+{
+    public bool RunTests { get; set; }
+    public bool RunTestsWhenOpenedViaCommandLine { get; set; }
+    public bool RunSlowTests { get; set; }
+    public bool PassUncertainTestsWhenFailed { get; set; }
+    public bool PrintAdditionalLogs { get; set; }
 }

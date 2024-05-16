@@ -6,6 +6,8 @@ public class CommandLineReader
 	private static readonly string argumentPrefix = "--"; 
 	private static readonly string valueSeperator = "="; 
 	private static readonly string[] valueArguments = { "pipe-name" };
+	
+	public static bool OpenedViaCommandLine => OS.GetCmdlineArgs().Length > 1;
 
 	public static void ParseCustomArguments()
 	{

@@ -14,3 +14,9 @@ game:
   ballPositionHistoryBufferSize: 5
   ballStuckThreshold: 5.0 # in px
   ballFlewThroughMovementSlowdown: 0.5 # multiplier
+tests:
+  runTests: true
+  runTestsWhenOpenedViaCommandLine: false
+  runSlowTests: true
+  passUncertainTestsWhenFailed: true
+  printAdditionalLogs: true
