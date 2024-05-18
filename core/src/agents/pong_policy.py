@@ -1,20 +1,19 @@
-from ray.rllib import SampleBatch
-from ray.rllib.policy.policy import Policy
+import os
+
 import torch
+from ray.rllib.policy.policy import Policy
 
-from core.src.policies.pong_policy_network import PongPolicyNetwork
 
-
-class CustomPolicy(Policy):
+class PongAgentPolicy(Policy):
     def __init__(self, observation_space, action_space, config):
         Policy.__init__(self, observation_space, action_space, config)
-        self.policy_network = PongPolicyNetwork(observation_space.shape[0], action_space.n)
-        self.lr = 0.001
-        self.optimizer = torch.optim.Adam(self.policy_network.parameters(), lr=self.lr, maximize=True)
-        # Zakładając istnienie optymalizatora
-        self.gamma = 0.99
-        self.patience = 100
-        self.buffer = []
+        self.policy_network = config["model"]["custom_model"](observation_space.shape[0], action_space.n)
+        self.model_path = config["model_path"]
+        if os.path.exists(self.model_path):
+            self.policy_network.load_state_dict(torch.load(self.model_path))
+        self.optimizer = torch.optim.Adam(self.policy_network.parameters(), lr=config["learning_rate"], maximize=True)
+        self.gamma = config["gamma"]
+        self.buffer = [None]
         self.loss = []
 
     def discount_rewards(self, rewards: torch.Tensor):
@@ -27,8 +26,16 @@ class CustomPolicy(Policy):
 
         return discounted_rewards
 
-    def compute_actions(self, obs_batch, state_batches=None, prev_action_batch=None, prev_reward_batch=None,
-                        info_batch=None, episodes=None, **kwargs):
+    def compute_actions(  # noqa: PLR0913
+        self,
+        obs_batch,
+        state_batches=None,  # noqa: ARG002
+        prev_action_batch=None,  # noqa: ARG002
+        prev_reward_batch=None,  # noqa: ARG002
+        info_batch=None,  # noqa: ARG002
+        episodes=None,  # noqa: ARG002
+        **kwargs,  # noqa: ARG002
+    ):
         actions = []
         with torch.no_grad():
             for obs in obs_batch:
@@ -43,57 +50,42 @@ class CustomPolicy(Policy):
                 actions.append(action)
         return actions, [], {}
 
-    def learn_on_loaded_batch(self, offset: int = 0, buffer_index: int = 0):
+    def learn_on_loaded_batch(self, offset: int = 0, buffer_index: int = 0):  # noqa: ARG002
+        data = self.buffer[buffer_index]
+        rewards = data.get("rewards", None)
+        states = data.get("obs", None)
+        actions = data.get("actions", None)
 
-        # Pobieranie wskaźników do nagród z batcha
-        rewards = self.buffer[buffer_index].get("rewards", None)
-        if rewards is None:
-            raise ValueError
-            return
-
-        # Konwertowanie nagród na tensor PyTorch
-        rewards_tensor = torch.tensor(rewards, dtype=torch.float32)
-
-        discounted_rewards = self.discount_rewards(rewards_tensor)
-
-        states = self.buffer[buffer_index].get("obs", None)
-        if states is None:
-            raise ValueError
-
-        states_tensor = torch.tensor(states, dtype=torch.float32)
-
-        policy_logits = self.policy_network(states_tensor)
-
+        policy_logits = self.policy_network(torch.tensor(states, dtype=torch.float32))
         distribution = torch.distributions.Categorical(logits=policy_logits)
-
-        actions = self.buffer[buffer_index].get("actions", None)
-        if actions is None:
-            return
-
-        log_probs = distribution.log_prob(torch.tensor(actions))
-
-        policy_loss = -(log_probs * discounted_rewards).mean()
+        log_probs_tensor = distribution.log_prob(torch.tensor(actions))
+        advantages = self.discount_rewards(torch.tensor(rewards, dtype=torch.float))
+        # reconsider this, isn't sample size to small for normalization
+        # advantages = (advantages - advantages.mean()) / advantages.std()
+        policy_loss = torch.dot(log_probs_tensor, advantages) / len(advantages)
 
         self.optimizer.zero_grad()
         policy_loss.backward()
         self.optimizer.step()
 
-        # Zapisanie straty polityki dla celów monitorowania
         self.loss.append(policy_loss.item())
         return {"policy_loss": policy_loss.item()}
 
     def get_weights(self):
-        """Funkcja pobierająca wagi polityki."""
         return self.policy_network.state_dict()
 
     def set_weights(self, weights):
-        """Funkcja ustawiająca wagi polityki."""
+        os.makedirs("model", exist_ok=True)
         self.policy_network.load_state_dict(weights)
+        torch.save(self.policy_network.state_dict(), self.model_path)
 
     def load_batch_into_buffer(self, batch, buffer_index: int = 0) -> int:
-        if not SampleBatch == type(batch):
-            raise TypeError
+        num_devices = self.config["num_workers"]
+        total_samples = buffer_index
+        samples_per_device = total_samples // num_devices
+
         while len(self.buffer) < buffer_index:
             self.buffer.append(None)
-        self.buffer.append(batch)
-        return 1
+        self.buffer[buffer_index] = batch
+
+        return samples_per_device
