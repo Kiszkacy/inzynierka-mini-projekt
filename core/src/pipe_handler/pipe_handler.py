@@ -72,14 +72,15 @@ class PipeHandler:
             self.pipe.flush()
 
     def receive(self) -> bytes:
-        start_time = time.perf_counter()
         data: bytes
         if ON_WINDOWS:
+            start_time = time.perf_counter()
             _, data = win32file.ReadFile(self.pipe, READ_BUFFER_SIZE)
+            end_time = time.perf_counter()
+            elapsed_time = end_time - start_time
         else:
             data = self.pipe.read(READ_BUFFER_SIZE)
-        end_time = time.perf_counter()
-        elapsed_time = end_time - start_time
+            elapsed_time = 0
 
         self.log_time(elapsed_time)
         return data
