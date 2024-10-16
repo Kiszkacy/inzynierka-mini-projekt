@@ -2,6 +2,7 @@
 # ruff: disable
 
 import platform
+import time
 from typing import IO
 
 from loguru import logger
@@ -19,11 +20,20 @@ READ_BUFFER_SIZE: int = 512
 
 
 class PipeHandler:
-    def __init__(self, pipe_name: str | None = None) -> None:
+    def __init__(
+        self,
+        pipe_name: str | None = None,
+        log_file: str = "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\pipe.txt",
+    ) -> None:
         if pipe_name is None:
             pipe_name = "godot-python-pipe"
         self.pipe: int | IO | None = None
         self.pipe_path: str = self._default_pipe_prefix.format(pipe_name=pipe_name)
+        self.log_file = log_file
+
+    def log_time(self, time_elapsed: float) -> None:
+        with open(self.log_file, "a") as log_file:
+            log_file.write(f"{time_elapsed}\n")
 
     @property
     def _default_pipe_prefix(self) -> str:
@@ -62,9 +72,14 @@ class PipeHandler:
             self.pipe.flush()
 
     def receive(self) -> bytes:
+        start_time = time.perf_counter()
         data: bytes
         if ON_WINDOWS:
             _, data = win32file.ReadFile(self.pipe, READ_BUFFER_SIZE)
         else:
             data = self.pipe.read(READ_BUFFER_SIZE)
+        end_time = time.perf_counter()
+        elapsed_time = end_time - start_time
+
+        self.log_time(elapsed_time)
         return data
