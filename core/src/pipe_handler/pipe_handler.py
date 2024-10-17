@@ -23,16 +23,14 @@ class PipeHandler:
     def __init__(
         self,
         pipe_name: str | None = None,
-        log_file: str = "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\pipe.txt",
     ) -> None:
         if pipe_name is None:
             pipe_name = "godot-python-pipe"
         self.pipe: int | IO | None = None
         self.pipe_path: str = self._default_pipe_prefix.format(pipe_name=pipe_name)
-        self.log_file = log_file
 
-    def log_time(self, time_elapsed: float) -> None:
-        with open(self.log_file, "a") as log_file:
+    def log_time(self, filename, time_elapsed: float) -> None:
+        with open(filename, "a") as log_file:
             log_file.write(f"{time_elapsed}\n")
 
     @property
@@ -66,10 +64,18 @@ class PipeHandler:
 
     def send(self, data_bytes) -> None:
         if ON_WINDOWS:
+            start_time = time.perf_counter()
             win32file.WriteFile(self.pipe, data_bytes)
+            end_time = time.perf_counter()
+            elapsed_time = end_time - start_time
         else:
             self.pipe.write(data_bytes)
             self.pipe.flush()
+            elapsed_time = 0
+        self.log_time(
+            "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\python_pipe_send.txt",
+            elapsed_time,
+        )
 
     def receive(self) -> bytes:
         data: bytes
@@ -82,5 +88,8 @@ class PipeHandler:
             data = self.pipe.read(READ_BUFFER_SIZE)
             elapsed_time = 0
 
-        self.log_time(elapsed_time)
+        self.log_time(
+            "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\python_pipe_recv.txt",
+            elapsed_time,
+        )
         return data

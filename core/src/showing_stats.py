@@ -7,7 +7,7 @@ import seaborn as sns
 
 def load_data_from_file(file_path):
     with open(file_path) as file:
-        return [float(line.strip()) for line in file.readlines()]
+        return [float(line.strip().replace(",", ".")) for line in file.readlines()]
 
 
 def plot_data(data):
@@ -19,8 +19,31 @@ def plot_data(data):
     plt.show()
 
 
-log_file_pipe = "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\pipe.txt"
-log_file_socket = "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\socket.txt"
+godot_pipe_send = load_data_from_file(
+    "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\godot_pipe_send.txt"
+)
+godot_pipe_recv = load_data_from_file(
+    "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\godot_pipe_recv.txt"
+)
+python_pipe_send = load_data_from_file(
+    "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\python_pipe_send.txt"
+)
+python_pipe_recv = load_data_from_file(
+    "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\python_pipe_recv.txt"
+)
+
+godot_socket_send = load_data_from_file(
+    "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\godot_socket_send.txt"
+)
+godot_socket_recv = load_data_from_file(
+    "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\godot_socket_recv.txt"
+)
+python_socket_send = load_data_from_file(
+    "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\python_socket_send.txt"
+)
+python_socket_recv = load_data_from_file(
+    "C:\\Users\\sokol\\OneDrive\\Pulpit\\INZYNIERKA\\inzynierka-mini-projekt\\python_socket_recv.txt"
+)
 
 
 def calculate_average(data):
@@ -29,10 +52,13 @@ def calculate_average(data):
     return sum(data) / len(data)
 
 
-data_pipe = load_data_from_file(log_file_pipe)
-average_pipe = calculate_average(data_pipe)
-data_socket = load_data_from_file(log_file_socket)
-average_socket = calculate_average(data_socket)
+data_socket = []
+data_pipe = []
+
+for i in range(5000):
+    data_pipe.append(godot_pipe_send[i] + python_pipe_send[i] + godot_pipe_recv[i] + python_pipe_recv[i])
+    data_socket.append(python_socket_send[i] + godot_socket_send[i] + python_socket_recv[i] + godot_socket_recv[i])
+
 # print(f"Średnia wartość czasu: {average:.5f} sekundy")
 """
 methods = ['Socket', 'Pipe']
@@ -60,18 +86,18 @@ cleaned_data_socket = remove_outliers(data_socket)
 cleaned_data_pipe = remove_outliers(data_pipe)
 
 data = [cleaned_data_socket, cleaned_data_pipe]
-labels = ["Socket", "Pipe"]
+labels = ["Gniazdo", "Potok"]
 
-plt.figure(figsize=(8, 6))
+plt.figure(figsize=(8, 8))
 sns.violinplot(data=data, palette=["#D0FFFF", "#FFEBCD"])
 
 mean_socket = np.mean(cleaned_data_socket)
 mean_pipe = np.mean(cleaned_data_pipe)
 
 plt.xticks([0, 1], labels)
-plt.title("Porównanie rozkładu czasu przesyłu: Socket vs Pipe")
+plt.title("Porównanie rozkładu czasu przesyłu")
 plt.ylabel("Czas przesyłu (s)")
 
-plt.legend([f"Średnia Socket: {mean_socket:.4f}s", f"Średnia Pipe: {mean_pipe:.4f}s"], loc="upper right")
+plt.legend([f"Średnia dla gniazda: {mean_socket:.4f}s", f"Średnia dla potoku: {mean_pipe:.4f}s"], loc="upper right")
 
 plt.show()
